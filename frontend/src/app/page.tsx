@@ -1,18 +1,29 @@
 import { Navbar } from "@/components/shared/Navbar";
 import { Hero } from "@/components/landing/Hero";
+import { About } from "@/components/landing/About";
+import { Features } from "@/components/landing/Features";
+import { Roadmap } from "@/components/landing/Roadmap";
+import { Pricing } from "@/components/landing/Pricing";
+import { Footer } from "@/components/landing/Footer";
 
 export default function Home() {
     return (
         <main className="min-h-screen bg-black text-white selection:bg-primary/30">
             <Navbar />
             <Hero />
-
-            {/* Footer */}
-            <footer className="border-t border-white/10 py-12 bg-black">
-                <div className="container mx-auto px-4 text-center text-muted-foreground">
-                    <p>&copy; 2024 Solana Copilot. All rights reserved.</p>
-                </div>
-            </footer>
+            <div id="about">
+                <About />
+            </div>
+            <div id="features">
+                <Features />
+            </div>
+            <div id="roadmap">
+                <Roadmap />
+            </div>
+            <div id="economics">
+                <Pricing />
+            </div>
+            <Footer />
         </main>
     );
 }

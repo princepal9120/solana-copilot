@@ -33,7 +33,12 @@ export function Navbar() {
 
                 {/* Desktop Nav */}
                 <div className="hidden md:flex items-center gap-8">
-                    {navItems.map((item) => (
+                    {[
+                        { name: "Home", href: "/" },
+                        { name: "About Us", href: "#about" },
+                        { name: "Roadmap", href: "#roadmap" },
+                        { name: "Economics", href: "#economics" },
+                    ].map((item) => (
                         <Link
                             key={item.name}
                             href={item.href}
@@ -46,13 +51,8 @@ export function Navbar() {
 
                 {/* Actions */}
                 <div className="hidden md:flex items-center gap-4">
-                    <Link href="/login">
-                        <Button variant="ghost" className="text-white hover:bg-white/10">
-                            Sign In
-                        </Button>
-                    </Link>
                     <Link href="/dashboard">
-                        <Button className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
+                        <Button className="bg-accent text-black hover:bg-accent/90 shadow-lg shadow-accent/20 rounded-full px-6">
                             Launch App
                         </Button>
                     </Link>

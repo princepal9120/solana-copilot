@@ -3,10 +3,11 @@
 ## ✅ Completed Components
 
 ### 1. **Core Infrastructure**
-- **Next.js 14 App Router** setup
-- **TailwindCSS** configuration with Shadcn/UI theme
+- **Next.js 16 (RC/Latest)** setup with Turbopack
+- **TailwindCSS 4.0** configuration (CSS-first)
+- **React 19** integration
 - **Providers**: Wallet (Solana), Theme (Dark Mode), Query (TanStack)
-- **Global Styles**: Custom CSS variables, glassmorphism utilities
+- **Global Styles**: Custom CSS variables, glassmorphism utilities using `@utility`
 
 ### 2. **Authentication Flow**
 - **Login Page**: Wallet connection UI with beautiful background effects

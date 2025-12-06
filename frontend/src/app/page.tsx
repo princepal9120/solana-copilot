@@ -1,29 +1,175 @@
-import { Navbar } from "@/components/shared/Navbar";
-import { Hero } from "@/components/landing/Hero";
-import { About } from "@/components/landing/About";
-import { Features } from "@/components/landing/Features";
-import { Roadmap } from "@/components/landing/Roadmap";
-import { Pricing } from "@/components/landing/Pricing";
-import { Footer } from "@/components/landing/Footer";
+import React from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Sparkles, Shield, Zap, TrendingUp, Activity } from "lucide-react";
+import { GlassCard } from "@/components/ui/glass-card";
 
-export default function Home() {
+export default function LandingPage() {
     return (
-        <main className="min-h-screen bg-black text-white selection:bg-primary/30">
-            <Navbar />
-            <Hero />
-            <div id="about">
-                <About />
-            </div>
-            <div id="features">
-                <Features />
-            </div>
-            <div id="roadmap">
-                <Roadmap />
-            </div>
-            <div id="economics">
-                <Pricing />
-            </div>
-            <Footer />
-        </main>
+        <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+            {/* Navbar */}
+            <header className="fixed top-0 w-full z-50 border-b border-white/10 bg-white/70 backdrop-blur-md">
+                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                            <Sparkles className="text-white h-5 w-5" />
+                        </div>
+                        <span className="font-bold text-xl text-slate-800">Solana Copilot</span>
+                    </div>
+                    <nav className="hidden md:flex items-center gap-8">
+                        <Link href="#features" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Features</Link>
+                        <Link href="#pricing" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Pricing</Link>
+                        <Link href="#docs" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Docs</Link>
+                    </nav>
+                    <div className="flex items-center gap-4">
+                        <Link href="/login">
+                            <Button variant="ghost" className="text-slate-600 hover:text-primary">Log In</Button>
+                        </Link>
+                        <Link href="/dashboard">
+                            <Button className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
+                                Launch App
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+            </header>
+
+            {/* Hero Section */}
+            <section className="pt-32 pb-20 px-6 relative z-10">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-8">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium">
+                            <Sparkles className="h-4 w-4" />
+                            <span>AI-Powered DeFi Automation</span>
+                        </div>
+                        <h1 className="text-5xl md:text-6xl font-bold text-slate-900 leading-[1.1] tracking-tight">
+                            Your AI Financial <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-teal-400">Advisor on Solana</span>
+                        </h1>
+                        <p className="text-lg text-slate-600 max-w-lg leading-relaxed">
+                            Execute swaps, automate DCAs, and analyze portfolio risk—all through natural language. No gas wars, no complexity.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <Link href="/dashboard">
+                                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white h-12 px-8 text-base shadow-xl shadow-primary/20 w-full sm:w-auto">
+                                    Start Trading Smarter <ArrowRight className="ml-2 h-4 w-4" />
+                                </Button>
+                            </Link>
+                            <Button size="lg" variant="outline" className="h-12 px-8 text-base border-slate-300 text-slate-700 hover:bg-slate-50 w-full sm:w-auto">
+                                View Documentation
+                            </Button>
+                        </div>
+
+                        <div className="flex items-center gap-4 pt-4">
+                            <div className="flex -space-x-3">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200" />
+                                ))}
+                            </div>
+                            <p className="text-sm text-slate-500">Trusted by <span className="font-bold text-slate-900">50,000+</span> traders</p>
+                        </div>
+                    </div>
+
+                    {/* Hero Visual */}
+                    <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-full blur-[100px] animate-pulse" />
+                        <GlassCard className="relative z-10 p-6 border-white/60 shadow-2xl transform rotate-[-2deg] hover:rotate-0 transition-transform duration-500">
+                            {/* Mock Chat Interface */}
+                            <div className="space-y-4">
+                                <div className="flex gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                        <Sparkles className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <div className="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-slate-600">
+                                        Market volatility is high. I recommend rebalancing your SOL holdings.
+                                    </div>
+                                </div>
+                                <div className="flex gap-3 flex-row-reverse">
+                                    <div className="bg-primary text-white p-3 rounded-2xl rounded-tr-none shadow-sm text-sm">
+                                        Execute rebalance. 50% USDC, 50% SOL.
+                                    </div>
+                                </div>
+                                <div className="flex gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                        <Sparkles className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <div className="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-slate-600 space-y-2">
+                                        <p>Done! Swapped 145 SOL to USDC.</p>
+                                        <div className="p-2 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center gap-2 text-emerald-700 text-xs font-bold">
+                                            <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                                            Transaction Confirmed
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </GlassCard>
+
+                        {/* Floating Elements */}
+                        <GlassCard className="absolute -bottom-6 -left-6 p-4 w-48 animate-bounce duration-[3000ms]">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-emerald-100 rounded-lg text-emerald-600">
+                                    <TrendingUp className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-slate-500">Portfolio</p>
+                                    <p className="font-bold text-slate-900">+24.5%</p>
+                                </div>
+                            </div>
+                        </GlassCard>
+                    </div>
+                </div>
+            </section>
+
+            {/* Features Grid (Bento) */}
+            <section id="features" className="py-20 px-6 bg-slate-50/50">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Everything you need to trade smarter</h2>
+                        <p className="text-slate-600 max-w-2xl mx-auto">
+                            Replace your complex trading terminal with a simple conversation.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <GlassCard className="md:col-span-2 p-8 bg-white/60">
+                            <div className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
+                                <Sparkles className="h-6 w-6 text-primary" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-2">Natural Language Trading</h3>
+                            <p className="text-slate-600">
+                                "Swap 20 USDC to SOL." The AI handles routing, slippage, and execution instantly.
+                            </p>
+                        </GlassCard>
+                        <GlassCard className="p-8 bg-white/60">
+                            <div className="h-12 w-12 bg-amber-100 rounded-xl flex items-center justify-center mb-6">
+                                <Zap className="h-6 w-6 text-amber-600" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-2">DCA Automation</h3>
+                            <p className="text-slate-600">
+                                Set up recurring buys or sells with simple commands.
+                            </p>
+                        </GlassCard>
+                        <GlassCard className="p-8 bg-white/60">
+                            <div className="h-12 w-12 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                                <Shield className="h-6 w-6 text-blue-600" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-2">Risk Analysis</h3>
+                            <p className="text-slate-600">
+                                Real-time portfolio scoring and volatility alerts.
+                            </p>
+                        </GlassCard>
+                        <GlassCard className="md:col-span-2 p-8 bg-white/60">
+                            <div className="h-12 w-12 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
+                                <Activity className="h-6 w-6 text-purple-600" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-2">Portfolio Tracking</h3>
+                            <p className="text-slate-600">
+                                Advanced analytics and PnL tracking across all your Solana wallets.
+                            </p>
+                        </GlassCard>
+                    </div>
+                </div>
+            </section>
+        </div>
     );
 }

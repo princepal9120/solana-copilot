@@ -5,6 +5,17 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { ArrowUpRight, TrendingUp, ShieldCheck, Activity, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+
+const portfolioData = [
+    { name: 'Mon', value: 14000 },
+    { name: 'Tue', value: 14500 },
+    { name: 'Wed', value: 14200 },
+    { name: 'Thu', value: 14800 },
+    { name: 'Fri', value: 15234 },
+    { name: 'Sat', value: 15100 },
+    { name: 'Sun', value: 15234 },
+];
 
 export default function DashboardPage() {
     return (
@@ -29,7 +40,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-12 gap-6">
 
                 {/* 1. Portfolio Value (Large Card) */}
-                <GlassCard className="col-span-12 md:col-span-8 p-6 flex flex-col justify-between min-h-[240px]">
+                <GlassCard className="col-span-12 md:col-span-8 p-6 flex flex-col justify-between min-h-[300px]">
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-sm font-medium text-muted-foreground mb-1">Total Portfolio Value</p>
@@ -46,19 +57,31 @@ export default function DashboardPage() {
                         </div>
                     </div>
 
-                    {/* Placeholder Chart Area */}
-                    <div className="h-24 w-full mt-4 bg-gradient-to-r from-primary/5 to-transparent rounded-lg border border-primary/10 relative overflow-hidden">
-                        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary/20" />
-                        <svg className="w-full h-full absolute bottom-0" preserveAspectRatio="none">
-                            <path d="M0,80 C100,70 200,90 300,50 C400,20 500,60 600,40 L600,100 L0,100 Z" fill="url(#grad1)" opacity="0.2" />
-                            <path d="M0,80 C100,70 200,90 300,50 C400,20 500,60 600,40" stroke="currentColor" strokeWidth="2" fill="none" className="text-primary" />
-                            <defs>
-                                <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stopColor="currentColor" className="text-primary" />
-                                    <stop offset="100%" stopColor="transparent" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
+                    {/* Chart Area */}
+                    <div className="h-48 w-full mt-4">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={portfolioData}>
+                                <defs>
+                                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <XAxis dataKey="name" hide />
+                                <YAxis hide domain={['dataMin - 500', 'dataMax + 500']} />
+                                <RechartsTooltip
+                                    contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                                    itemStyle={{ color: 'hsl(var(--foreground))' }}
+                                />
+                                <Area
+                                    type="monotone"
+                                    dataKey="value"
+                                    stroke="hsl(var(--primary))"
+                                    fillOpacity={1}
+                                    fill="url(#colorValue)"
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
                     </div>
                 </GlassCard>
 

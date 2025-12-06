@@ -3,15 +3,16 @@
 import React from "react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
-import { PieChart, TrendingUp, TrendingDown, ArrowUpRight, Wallet, BarChart3 } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowUpRight, Wallet, BarChart3, PieChart as PieChartIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 
 const holdings = [
-    { name: "Solana", symbol: "SOL", amount: "145.2", value: 10450, change: 5.2, color: "bg-purple-500" },
-    { name: "USD Coin", symbol: "USDC", amount: "4,500", value: 4500, change: 0, color: "bg-blue-500" },
-    { name: "Bonk", symbol: "BONK", amount: "15M", value: 284, change: -12.5, color: "bg-orange-500" },
-    { name: "Raydium", symbol: "RAY", amount: "120", value: 180, change: 8.3, color: "bg-teal-500" },
-    { name: "Jupiter", symbol: "JUP", amount: "500", value: 320, change: 15.2, color: "bg-indigo-500" },
+    { name: "Solana", symbol: "SOL", amount: "145.2", value: 10450, change: 5.2, fill: "#8b5cf6" },
+    { name: "USD Coin", symbol: "USDC", amount: "4,500", value: 4500, change: 0, fill: "#3b82f6" },
+    { name: "Bonk", symbol: "BONK", amount: "15M", value: 284, change: -12.5, fill: "#f97316" },
+    { name: "Raydium", symbol: "RAY", amount: "120", value: 180, change: 8.3, fill: "#14b8a6" },
+    { name: "Jupiter", symbol: "JUP", amount: "500", value: 320, change: 15.2, fill: "#6366f1" },
 ];
 
 const transactions = [
@@ -83,7 +84,7 @@ export default function PortfolioPage() {
                 <GlassCard className="lg:col-span-2 p-6">
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="font-semibold text-foreground flex items-center gap-2">
-                            <PieChart className="h-5 w-5 text-primary" />
+                            <PieChartIcon className="h-5 w-5 text-primary" />
                             Holdings
                         </h3>
                         <Button variant="ghost" size="sm">View All</Button>
@@ -99,7 +100,7 @@ export default function PortfolioPage() {
                         {holdings.map((holding) => (
                             <div key={holding.symbol} className="grid grid-cols-5 items-center py-3 px-3 hover:bg-muted/50 rounded-lg transition-colors">
                                 <div className="flex items-center gap-3">
-                                    <div className={cn("w-3 h-3 rounded-full", holding.color)} />
+                                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: holding.fill }} />
                                     <div>
                                         <p className="font-medium text-foreground">{holding.name}</p>
                                         <p className="text-xs text-muted-foreground">{holding.symbol}</p>
@@ -121,44 +122,37 @@ export default function PortfolioPage() {
                     </div>
                 </GlassCard>
 
-                {/* Allocation Chart Placeholder */}
+                {/* Allocation Chart */}
                 <GlassCard className="p-6">
                     <h3 className="font-semibold text-foreground mb-6">Allocation</h3>
-                    <div className="flex items-center justify-center h-48">
-                        <div className="relative w-40 h-40">
-                            <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
-                                {holdings.map((holding, index) => {
-                                    const percentage = (holding.value / totalValue) * 100;
-                                    const offset = holdings.slice(0, index).reduce((acc, h) => acc + (h.value / totalValue) * 100, 0);
-                                    return (
-                                        <circle
-                                            key={holding.symbol}
-                                            cx="50"
-                                            cy="50"
-                                            r="40"
-                                            fill="transparent"
-                                            stroke={holding.color.replace('bg-', 'var(--')}
-                                            strokeWidth="20"
-                                            strokeDasharray={`${percentage * 2.51} 251`}
-                                            strokeDashoffset={`${-offset * 2.51}`}
-                                            className={holding.color.replace('bg-', 'stroke-')}
-                                        />
-                                    );
-                                })}
-                            </svg>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="text-center">
-                                    <p className="text-2xl font-bold text-foreground">{holdings.length}</p>
-                                    <p className="text-xs text-muted-foreground">Assets</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div className="h-[200px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={holdings}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={80}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
+                                    {holdings.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.fill} stroke="none" />
+                                    ))}
+                                </Pie>
+                                <RechartsTooltip
+                                    contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                                    itemStyle={{ color: 'hsl(var(--foreground))' }}
+                                />
+                            </PieChart>
+                        </ResponsiveContainer>
                     </div>
                     <div className="mt-4 space-y-2">
                         {holdings.slice(0, 3).map((holding) => (
                             <div key={holding.symbol} className="flex items-center justify-between text-sm">
                                 <div className="flex items-center gap-2">
-                                    <div className={cn("w-2 h-2 rounded-full", holding.color)} />
+                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: holding.fill }} />
                                     <span className="text-foreground">{holding.symbol}</span>
                                 </div>
                                 <span className="text-muted-foreground">{((holding.value / totalValue) * 100).toFixed(1)}%</span>
@@ -187,9 +181,9 @@ export default function PortfolioPage() {
                         <div key={i} className="grid grid-cols-6 items-center py-3 px-3 hover:bg-muted/50 rounded-lg transition-colors">
                             <span className={cn(
                                 "text-xs font-medium px-2 py-1 rounded-full w-fit",
-                                tx.type === "Buy" ? "bg-emerald-100 text-emerald-700" :
-                                    tx.type === "Sell" ? "bg-red-100 text-red-700" :
-                                        tx.type === "Swap" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
+                                tx.type === "Buy" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" :
+                                    tx.type === "Sell" ? "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400" :
+                                        tx.type === "Swap" ? "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400" : "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400"
                             )}>
                                 {tx.type}
                             </span>

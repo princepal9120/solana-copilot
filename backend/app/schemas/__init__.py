@@ -321,6 +321,8 @@ class ChatResponse(BaseSchema):
     status: str = Field(..., description="Status: processing, awaiting_approval, success, error")
     action: Optional[str] = Field(None, description="Detected action")
     preview: Optional[Dict[str, Any]] = Field(None, description="Transaction preview")
+    transaction: Optional[Dict[str, Any]] = Field(None, description="Transaction details for frontend")
+    message: Optional[str] = Field(None, description="Text response from AI")
     next_step: Optional[str] = Field(None, description="Next step instruction")
     error: Optional[str] = Field(None, description="Error message if any")
 

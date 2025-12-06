@@ -374,15 +374,14 @@ async def handle_approval(
 # HTTP Endpoints (Alternative to WebSocket)
 # ============================================
 
-@router.post("/message", response_model=ChatResponse)
+@router.post("/send", response_model=ChatResponse)
 async def send_message(
     message: ChatMessage,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """
-    HTTP endpoint for chat (alternative to WebSocket).
-    Useful for testing and simple integrations.
+    HTTP endpoint for chat.
     """
     
     try:
@@ -392,16 +391,64 @@ async def send_message(
             current_user.wallet_address
         )
         
-        return ChatResponse(
+        action = intent_result["action"]
+        params = intent_result["parameters"]
+        
+        # Default response
+        response = ChatResponse(
             id=str(uuid4()),
-            status="processing",
-            action=intent_result["action"],
+            status="success",
+            action=action,
+            message=f"I understood you want to {action}.",
             preview={
                 "confidence": intent_result["confidence"],
-                "parameters": intent_result["parameters"],
-            },
-            next_step="Transaction planning in progress...",
+                "parameters": params,
+            }
         )
+        
+        if action == "swap":
+            # Validate params
+            if not all([params.get("source_token"), params.get("dest_token"), params.get("amount")]):
+                response.status = "error"
+                response.message = "Please specify source token, destination token, and amount."
+                return response
+
+            # Plan transaction
+            result = await plan_swap_transaction(
+                user_wallet=current_user.wallet_address,
+                source_token=params.get("source_token"),
+                dest_token=params.get("dest_token"),
+                amount=float(params.get("amount", 0)),
+                slippage_bps=params.get("slippage_bps", 100),
+            )
+            
+            if result.get("error"):
+                response.status = "error"
+                response.error = result["error"]
+                response.message = f"Failed to plan swap: {result['error']}"
+            else:
+                simulation = result.get("simulation_result", {})
+                response.status = "awaiting_approval"
+                response.message = f"I've prepared a swap for {params.get('amount')} {params.get('source_token')} to {params.get('dest_token')}. Please review and approve."
+                
+                # Construct TransactionDetails for frontend
+                response.transaction = {
+                    "type": "swap",
+                    "fromToken": params.get("source_token"),
+                    "fromAmount": str(params.get("amount")),
+                    "toToken": params.get("dest_token"),
+                    "toAmount": str(simulation.get("amount_out", 0)),
+                    "priceImpact": f"{simulation.get('price_impact', 0)}%",
+                    "fee": f"{simulation.get('gas_estimate', 0)} lamports",
+                    "route": "Best Route", # Simplified
+                    "riskLevel": "low",
+                    "swapTransaction": simulation.get("swap_transaction")
+                }
+        
+        elif action == "analyze":
+             response.message = "I'm analyzing your portfolio... (Analysis feature coming soon)"
+             
+        return response
     
     except Exception as e:
         logger.error(f"Error processing message: {e}", exc_info=True)
@@ -409,4 +456,5 @@ async def send_message(
             id=str(uuid4()),
             status="error",
             error=str(e),
+            message="An error occurred while processing your request."
         )

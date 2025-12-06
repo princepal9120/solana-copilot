@@ -342,6 +342,7 @@ async def simulate_swap(
             "price_impact": quote["price_impact"],
             "gas_estimate": simulation["gas_estimate"],
             "logs": simulation["logs"],
+            "swap_transaction": tx["swap_transaction"],
             "error": simulation.get("error"),
         }
     

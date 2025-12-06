@@ -5,6 +5,7 @@ import "@solana/wallet-adapter-react-ui/styles.css";
 import { SolanaWalletProvider } from "@/components/providers/WalletProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import QueryProvider from "@/components/providers/QueryProvider";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -28,15 +29,16 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning>
             <body className={`${inter.variable} ${ibmPlexMono.variable} font-sans antialiased bg-background text-foreground`}>
                 <ThemeProvider
-                    attribute="class"
                     defaultTheme="light"
                     enableSystem
                     disableTransitionOnChange
                 >
                     <QueryProvider>
                         <SolanaWalletProvider>
-                            {children}
-                            <Toaster position="top-right" richColors />
+                            <AuthProvider>
+                                {children}
+                                <Toaster position="top-right" richColors />
+                            </AuthProvider>
                         </SolanaWalletProvider>
                     </QueryProvider>
                 </ThemeProvider>

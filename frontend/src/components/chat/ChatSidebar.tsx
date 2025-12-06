@@ -1,10 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Send, Sparkles, X, MessageCircle } from "lucide-react";
+import { Send, Sparkles, X, MessageCircle, Mic } from "lucide-react";
+import { TransactionPreview, TransactionDetails } from "./TransactionPreview";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useChatStore } from "@/store/useChatStore";
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { VersionedTransaction } from '@solana/web3.js';
+import { toast } from 'sonner';
 
 interface ChatSidebarProps {
     isOpen: boolean;
@@ -15,6 +19,9 @@ export function ChatSidebar({ isOpen, onToggle }: ChatSidebarProps) {
     const [input, setInput] = useState("");
     const { messages, isLoading, sendMessage } = useChatStore();
     const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+    const { connection } = useConnection();
+    const { publicKey, signTransaction } = useWallet();
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,6 +42,48 @@ export function ChatSidebar({ isOpen, onToggle }: ChatSidebarProps) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSend();
+        }
+    };
+
+    const handleApprove = async (details: TransactionDetails) => {
+        if (!details.swapTransaction) {
+            toast.error("No transaction data found");
+            return;
+        }
+
+        if (!publicKey || !signTransaction) {
+            toast.error("Wallet not connected");
+            return;
+        }
+
+        const toastId = toast.loading("Processing transaction...");
+
+        try {
+            // Deserialize transaction
+            const swapTransactionBuf = Uint8Array.from(atob(details.swapTransaction), c => c.charCodeAt(0));
+            const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+
+            // Sign transaction
+            const signedTransaction = await signTransaction(transaction);
+
+            // Send to RPC
+            const signature = await connection.sendRawTransaction(signedTransaction.serialize());
+
+            toast.loading("Confirming transaction...", { id: toastId });
+
+            await connection.confirmTransaction(signature, 'confirmed');
+
+            toast.success("Transaction executed!", {
+                id: toastId,
+                description: `Signature: ${signature.slice(0, 8)}...`
+            });
+
+        } catch (error) {
+            console.error("Transaction failed", error);
+            toast.error("Transaction failed", {
+                id: toastId,
+                description: error instanceof Error ? error.message : "Unknown error"
+            });
         }
     };
 
@@ -108,6 +157,15 @@ export function ChatSidebar({ isOpen, onToggle }: ChatSidebarProps) {
                                         : "bg-card border border-border text-foreground rounded-tl-none"
                                 )}>
                                     {msg.content}
+                                    {msg.transactionDetails && (
+                                        <div className="mt-3">
+                                            <TransactionPreview
+                                                details={msg.transactionDetails}
+                                                onApprove={() => handleApprove(msg.transactionDetails!)}
+                                                onReject={() => toast.info("Transaction rejected")}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -140,14 +198,25 @@ export function ChatSidebar({ isOpen, onToggle }: ChatSidebarProps) {
                                 className="w-full resize-none rounded-xl border border-input bg-background p-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all h-[80px] text-foreground placeholder:text-muted-foreground"
                                 disabled={isLoading}
                             />
-                            <Button
-                                size="icon"
-                                className="absolute right-2 bottom-2 h-8 w-8 rounded-lg bg-primary hover:bg-primary/90 transition-all shadow-sm"
-                                onClick={handleSend}
-                                disabled={isLoading || !input.trim()}
-                            >
-                                <Send className="h-4 w-4 text-primary-foreground" />
-                            </Button>
+                            <div className="absolute right-2 bottom-2 flex gap-1">
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground transition-all"
+                                    onClick={() => console.log("Voice input clicked")}
+                                    title="Voice Input (Coming Soon)"
+                                >
+                                    <Mic className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                    size="icon"
+                                    className="h-8 w-8 rounded-lg bg-primary hover:bg-primary/90 transition-all shadow-sm"
+                                    onClick={handleSend}
+                                    disabled={isLoading || !input.trim()}
+                                >
+                                    <Send className="h-4 w-4 text-primary-foreground" />
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>

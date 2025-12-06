@@ -58,14 +58,17 @@ def execute_due_automations():
         db.close()
 
 
+import asyncio
+
 @celery_app.task(name="app.workers.dca_worker.execute_dca_swap")
 def execute_dca_swap(automation_id: str):
     """
     Execute a single DCA swap transaction.
-    
-    Args:
-        automation_id: UUID of the automation to execute
     """
+    return asyncio.run(_execute_dca_swap_async(automation_id))
+
+async def _execute_dca_swap_async(automation_id: str):
+    """Async implementation of DCA swap execution"""
     logger.info(f"Executing DCA automation: {automation_id}")
     
     db = SessionLocal()
@@ -97,7 +100,8 @@ def execute_dca_swap(automation_id: str):
         try:
             # Get current balance
             solana = get_solana_client()
-            balance = await solana.get_token_balance(wallet, automation.source_token)
+            balance_info = await solana.get_token_balance(wallet, automation.source_token)
+            balance = balance_info["ui_amount"]
             
             if balance < float(automation.amount):
                 raise Exception(f"Insufficient balance: {balance} < {automation.amount}")
@@ -105,16 +109,16 @@ def execute_dca_swap(automation_id: str):
             # Get swap quote
             jupiter = get_jupiter_client()
             quote = await jupiter.get_quote(
-                input_mint=automation.source_token,
-                output_mint=automation.dest_token,
-                amount=int(float(automation.amount) * 1e9),  # Convert to lamports
+                source_token=automation.source_token,
+                dest_token=automation.dest_token,
+                amount=float(automation.amount),
                 slippage_bps=100,  # 1% slippage
             )
             
-            if not quote or quote.get("error"):
-                raise Exception(f"Failed to get quote: {quote.get('error')}")
+            if not quote:
+                raise Exception("Failed to get quote")
             
-            output_amount = quote.get("outAmount", 0) / 1e9
+            output_amount = quote.get("amount_out", 0)
             price = float(automation.amount) / output_amount if output_amount > 0 else 0
             
             # Build and execute transaction
@@ -160,6 +164,3 @@ def execute_dca_swap(automation_id: str):
     
     finally:
         db.close()
-
-
-from datetime import timedelta

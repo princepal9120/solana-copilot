@@ -28,3 +28,14 @@ export const chatApi = {
         return response.data;
     }
 };
+
+export const authApi = {
+    requestChallenge: async (wallet: string) => {
+        const response = await api.post('/auth/request-challenge', { wallet });
+        return response.data;
+    },
+    verifySignature: async (wallet: string, message: string, signature: string) => {
+        const response = await api.post('/auth/verify-signature', { wallet, message, signature });
+        return response.data;
+    }
+};

@@ -6,6 +6,7 @@ export interface Message {
     role: 'user' | 'assistant';
     content: string;
     timestamp: number;
+    transactionDetails?: import('@/components/chat/TransactionPreview').TransactionDetails;
 }
 
 interface ChatState {
@@ -58,8 +59,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
             const aiMsg: Message = {
                 id: (Date.now() + 1).toString(),
                 role: 'assistant',
-                content: response.message || "I processed your request.", // Adjust based on actual backend response
+                content: response.message || "I processed your request.",
                 timestamp: Date.now(),
+                transactionDetails: response.transaction // Assuming backend returns this
             };
             addMessage(aiMsg);
         } catch (error) {

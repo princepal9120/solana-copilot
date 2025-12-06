@@ -1,172 +1,106 @@
-# Solana Copilot - AI Agent Wallet
+# 🚀 Solana Copilot
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com/)
-[![Anchor](https://img.shields.io/badge/Anchor-0.30-purple)](https://www.anchor-lang.com/)
-[![Solana](https://img.shields.io/badge/Solana-1.18-9945FF)](https://solana.com/)
+**AI-Powered DeFi Agent for Solana** - Execute trades, analyze portfolios, and automate strategies through natural language.
 
-> **Next-generation smart wallet combining autonomous AI agents, natural language interfaces, and blockchain-native automation to simplify Solana financial management.**
-
-## 🌟 Features
-
-### 🤖 Conversational Wallet Control
-- Natural language commands: "Swap 20 USDC → SOL", "Analyze my portfolio risk"
-- AI-powered intent classification with 95%+ accuracy
-- Multi-step transaction orchestration through LangGraph agents
-
-### ⚡ Autonomous Execution
-- **DCA (Dollar-Cost Averaging)**: Automated recurring purchases
-- **Recurring Swaps**: Schedule regular token swaps
-- **Threshold-Based Rebalancing**: Maintain target portfolio allocation
-- **Smart Automations**: On-chain execution via Anchor programs
-
-### 📊 Portfolio Intelligence
-- Real-time risk analysis and volatility tracking
-- PnL computation (realized + unrealized gains)
-- Portfolio concentration warnings
-- AI-driven rebalancing suggestions
-
-### 🔒 Transaction Safety
-- 100% pre-execution simulation
-- Multi-level approval flows (low/medium/high risk)
-- Session keys for rapid approvals
-- Non-custodial architecture (no private keys on server)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Solana](https://img.shields.io/badge/Solana-Devnet-9945FF?logo=solana)](https://solana.com/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
 
-## 🏗️ Architecture
+## ✨ Features
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        Frontend (Next.js 16)                │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
-│  │   Chat   │  │Portfolio │  │Automations│  │ Wallet  │   │
-│  │Interface │  │Analytics │  │ Dashboard │  │ Adapter │   │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
-└─────────────────────────────────────────────────────────────┘
-                            ↕ WebSocket / REST
-┌─────────────────────────────────────────────────────────────┐
-│                      Backend (FastAPI)                      │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │              LangGraph AI Agents                     │  │
-│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐    │  │
-│  │  │  Intent    │→ │Transaction │→ │ Portfolio  │    │  │
-│  │  │Classifier  │  │  Planner   │  │  Analyzer  │    │  │
-│  │  └────────────┘  └────────────┘  └────────────┘    │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                             │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
-│  │ Helius   │  │ Jupiter  │  │ Birdeye  │  │  Celery  │  │
-│  │   RPC    │  │   Swap   │  │  Prices  │  │ Workers  │  │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
-└─────────────────────────────────────────────────────────────┘
-                            ↕
-┌─────────────────────────────────────────────────────────────┐
-│                   Solana Blockchain                         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │ DCA Program  │  │  Rebalance   │  │ Session Key  │     │
-│  │   (Anchor)   │  │   Program    │  │   Program    │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-└─────────────────────────────────────────────────────────────┘
-```
+### 🤖 AI-Powered Chat Interface
+- **Natural Language Commands**: "Swap 10 SOL to USDC", "Show my portfolio", "Set up weekly DCA"
+- **Intent Classification**: LangGraph-powered agent understands user intent
+- **Transaction Simulation**: Preview exact outputs before signing
+
+### 💼 Portfolio Management
+- **Real-time Holdings**: View all tokens with live prices
+- **Risk Analysis**: Volatility, max drawdown, Value-at-Risk (95%)
+- **Performance Tracking**: PnL, 24h/7d/30d changes
+
+### 🔄 DCA & Automation
+- **Dollar-Cost Averaging**: Automated recurring buys
+- **Recurring Swaps**: Schedule token exchanges
+- **Portfolio Rebalancing**: Maintain target allocations
+
+### 🔐 Security
+- **Non-Custodial**: Sign-only authentication, no private keys stored
+- **Session Keys**: Scoped, time-limited transaction approvals
+- **Transaction Preview**: Full simulation before execution
+
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | Next.js 15, React 19, TailwindCSS 4, Framer Motion |
+| **Backend** | FastAPI, LangGraph, LangChain, Celery |
+| **Database** | PostgreSQL 16, Redis 7 |
+| **Blockchain** | Solana (Devnet), Jupiter, Orca, Raydium |
+| **AI** | Anthropic Claude, OpenAI GPT-4 |
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
+- Node.js 20+
+- Python 3.12+
+- Docker & Docker Compose
+- Solana CLI (optional)
 
-- **Node.js**: 20.x or higher
-- **Python**: 3.12 or higher
-- **Rust**: 1.82 or higher
-- **Solana CLI**: 1.18 or higher
-- **Anchor CLI**: 0.30 or higher
-- **Docker**: 27.x or higher (for local development)
-- **PostgreSQL**: 16.x
-- **Redis**: 7.4.x
-
-### 1. Clone the Repository
+### 1. Clone & Install
 
 ```bash
 git clone https://github.com/your-org/solana-copilot.git
 cd solana-copilot
+
+# Install all dependencies (npm workspaces)
+npm install
+
+# Install Python dependencies
+pip install -r backend/requirements.txt
 ```
 
 ### 2. Environment Setup
 
 ```bash
-# Copy environment template
+# Copy example env file
 cp .env.example .env
 
-# Edit .env with your API keys and configuration
+# Edit with your API keys
 nano .env
 ```
 
-### 3. Start Infrastructure (Docker)
+Required environment variables:
+- `ANTHROPIC_API_KEY` - For Claude AI
+- `OPENAI_API_KEY` - For GPT-4 (optional)
+- `JWT_SECRET` - Generate with `openssl rand -hex 32`
+
+### 3. Start Services
 
 ```bash
-cd infrastructure/docker
+# Start PostgreSQL & Redis
 docker-compose up -d postgres redis
-```
-
-### 4. Backend Setup
-
-```bash
-cd backend
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
 
 # Run database migrations
-alembic upgrade head
+cd backend && alembic upgrade head && cd ..
 
-# Start FastAPI server
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### 5. Frontend Setup
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server
+# Start development servers
 npm run dev
 ```
 
-### 6. Anchor Programs (Optional - for local testing)
+### 4. Access Application
 
-```bash
-cd programs
-
-# Build all programs
-anchor build
-
-# Deploy to devnet
-anchor deploy --provider.cluster devnet
-
-# Run tests
-anchor test
-```
-
-### 7. Start Celery Workers
-
-```bash
-cd backend
-
-# Start Celery worker
-celery -A app.workers.celery_app worker --loglevel=info
-
-# Start Celery beat (scheduler)
-celery -A app.workers.celery_app beat --loglevel=info
-```
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:8000 |
+| API Docs | http://localhost:8000/docs |
 
 ---
 
@@ -174,219 +108,75 @@ celery -A app.workers.celery_app beat --loglevel=info
 
 ```
 solana-copilot/
-│
-├── frontend/                          # Next.js 16 App Router Frontend
+├── frontend/                 # Next.js 15 application
 │   ├── src/
-│   │   ├── app/                      # App Router pages
-│   │   │   ├── (auth)/              # Auth group
-│   │   │   ├── (dashboard)/         # Dashboard group
-│   │   │   ├── api/                 # API routes (Next.js API)
-│   │   │   ├── layout.tsx           # Root layout
-│   │   │   ├── page.tsx             # Landing page
-│   │   │   └── globals.css
-│   │   │
-│   │   ├── components/              # React components
-│   │   │   ├── ui/                  # Shadcn/UI components
-│   │   │   ├── chat/                # Chat interface
-│   │   │   ├── portfolio/           # Portfolio components
-│   │   │   ├── automations/         # Automation components
-│   │   │   ├── transactions/        # Transaction components
-│   │   │   ├── wallet/              # Wallet components
-│   │   │   └── shared/              # Shared components
-│   │   │
-│   │   ├── lib/                     # Utility libraries
-│   │   ├── hooks/                   # Custom React hooks
-│   │   ├── store/                   # Zustand state management
-│   │   ├── types/                   # TypeScript types
-│   │   └── config/                  # Configuration
-│   │
-│   ├── public/                      # Static assets
-│   └── ...
-│
-├── backend/                          # FastAPI Backend
+│   │   ├── app/             # App router pages
+│   │   ├── components/      # React components
+│   │   └── lib/             # Utilities & API clients
+│   └── package.json
+├── backend/                  # FastAPI application
 │   ├── app/
-│   │   ├── main.py                  # FastAPI application entry
-│   │   ├── api/                     # API routes
-│   │   ├── core/                    # Core functionality
-│   │   ├── db/                      # Database
-│   │   ├── models/                  # SQLAlchemy models
-│   │   ├── schemas/                 # Pydantic schemas
-│   │   ├── services/                # Business logic services
-│   │   ├── agents/                  # LangGraph AI Agents
-│   │   ├── integrations/            # External integrations
-│   │   ├── workers/                 # Celery background workers
-│   │   └── utils/                   # Utility functions
-│   │
-│   ├── alembic/                     # Database migrations
-│   ├── tests/                       # Tests
-│   └── ...
-│
-├── programs/                         # Anchor Smart Contracts
-│   ├── dca-program/                 # DCA Vault Program
-│   ├── rebalance-program/           # Rebalancing Program
-│   ├── session-key-program/         # Session Key Program
-│   └── Anchor.toml                  # Anchor workspace config
-│
-├── shared/                           # Shared code (types, constants)
-├── infrastructure/                   # Infrastructure as Code (Docker, K8s, Terraform)
-├── scripts/                          # Utility scripts
-├── docs/                             # Documentation
-└── ...
+│   │   ├── agents/          # LangGraph AI agents
+│   │   ├── api/v1/          # REST endpoints
+│   │   ├── core/            # Config & security
+│   │   ├── models/          # SQLAlchemy models
+│   │   └── services/        # Business logic
+│   └── requirements.txt
+├── docker-compose.yml        # Container orchestration
+├── package.json              # Root workspace config
+└── README.md
 ```
-
----
-
-## 🔧 Common Tasks
-
-### Add a New API Endpoint
-
-1. Create schema in `backend/app/schemas/`
-2. Create router in `backend/app/api/v1/`
-3. Register router in `backend/app/main.py`
-4. Test with `/docs` endpoint
-
-### Add a New Database Model
-
-1. Create model in `backend/app/models/`
-2. Import in `backend/app/models/__init__.py`
-3. Create migration: `alembic revision --autogenerate -m "add model"`
-4. Apply migration: `alembic upgrade head`
-
-### Add a New Service
-
-1. Create service in `backend/app/services/`
-2. Implement business logic
-3. Use in routers via dependency injection
-
----
-
-## 🐛 Troubleshooting
-
-### Database Connection Error
-
-```bash
-# Check if PostgreSQL is running
-docker-compose ps postgres
-
-# View logs
-docker-compose logs postgres
-
-# Restart PostgreSQL
-docker-compose restart postgres
-```
-
-### Redis Connection Error
-
-```bash
-# Check if Redis is running
-docker-compose ps redis
-
-# Test connection
-docker exec -it solana-copilot-redis redis-cli ping
-# Should return: PONG
-
-# Restart Redis
-docker-compose restart redis
-```
-
-### Port Already in Use
-
-```bash
-# Find process using port 8000
-lsof -i :8000
-
-# Kill process
-kill -9 PID
-
-# Or change port in .env
-API_PORT=8001
-```
-
-### Import Errors
-
-```bash
-# Ensure virtual environment is activated
-source venv/bin/activate
-
-# Reinstall dependencies
-pip install -r requirements.txt --force-reinstall
-```
-
----
-
-## 🛠️ Technology Stack
-
-### Frontend
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript 5.5
-- **Styling**: TailwindCSS 4 + Shadcn/UI
-- **State**: Zustand 4.5
-- **Data Fetching**: SWR 2.2
-- **Blockchain**: @solana/web3.js 1.95, @solana/wallet-adapter 0.15
-- **Charts**: Recharts 2.12
-
-### Backend
-- **Framework**: FastAPI 0.115
-- **Language**: Python 3.12
-- **ORM**: SQLAlchemy 2.0
-- **Validation**: Pydantic 2.9
-- **AI**: LangGraph 0.2, LangChain 0.3
-- **LLM**: Claude 3.5 Sonnet (Anthropic 0.39)
-- **Blockchain**: solana-py 0.34, solders 0.21
-- **Workers**: Celery 5.4
-- **Cache**: Redis 5.2
-
-### Smart Contracts
-- **Framework**: Anchor 0.30
-- **Language**: Rust 1.82
-- **Blockchain**: Solana 1.18
-
-### Infrastructure
-- **Database**: PostgreSQL 16
-- **Cache**: Redis 7.4
-- **Containers**: Docker 27, Docker Compose 2.29
-- **Orchestration**: Kubernetes (optional)
-- **IaC**: Terraform (optional)
-
-### Integrations
-- **RPC**: Helius
-- **Swap**: Jupiter Aggregator
-- **Prices**: Birdeye + CoinGecko
-- **Monitoring**: Sentry, Datadog (optional)
 
 ---
 
 ## 📖 Documentation
 
-- **API Documentation**: See `/docs` endpoint when running the server
-- **Project Structure**: See above
-- **Troubleshooting**: See above
-- **Common Tasks**: See above
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System design & data flow
+- **[SETUP.md](./SETUP.md)** - Detailed setup & deployment guide
+- **[API Reference](http://localhost:8000/docs)** - OpenAPI/Swagger docs
+
+---
+
+## 🔑 API Endpoints
+
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/auth/request-challenge` | Get signing challenge |
+| POST | `/api/v1/auth/verify-signature` | Verify signature & get JWT |
+| GET | `/api/v1/auth/me` | Get current user |
+
+### Chat
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/chat/message` | Send message to AI agent |
+| GET | `/api/v1/chat/history` | Get conversation history |
+
+### Portfolio
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/portfolio` | Get portfolio holdings |
+| GET | `/api/v1/portfolio/risk` | Get risk analysis |
+
+### Automations
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/automations` | List automations |
+| POST | `/api/v1/automations` | Create automation |
+| DELETE | `/api/v1/automations/{id}` | Delete automation |
 
 ---
 
 ## 🧪 Testing
 
-### Backend Tests
 ```bash
-cd backend
-pytest app/tests/ -v --cov=app
-```
+# Frontend tests
+cd frontend && npm test
 
-### Frontend Tests
-```bash
-cd frontend
-npm run test
-```
+# Backend tests
+cd backend && pytest -v
 
-### Anchor Tests
-```bash
-cd programs
-anchor test
-```
-
-### E2E Tests
-```bash
+# E2E tests
 npm run test:e2e
 ```
 
@@ -394,124 +184,40 @@ npm run test:e2e
 
 ## 🚢 Deployment
 
-### Railway (Recommended for MVP)
+See **[SETUP.md](./SETUP.md)** for full deployment instructions.
 
+**Quick Docker deployment:**
 ```bash
-# Install Railway CLI
-npm install -g @railway/cli
-
-# Login
-railway login
-
-# Deploy backend
-cd backend
-railway up
-
-# Deploy frontend
-cd frontend
-railway up
+docker-compose up -d
 ```
-
-### Docker Production
-
-```bash
-cd infrastructure/docker
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-### Manual Deployment
-
-See [Production Deployment Guide](./docs/deployment/production-deploy.md)
-
----
-
-## 🔐 Security
-
-- **Non-Custodial**: No private keys stored on server
-- **SignMessage Auth**: Wallet-based authentication
-- **Transaction Simulation**: 100% pre-execution validation
-- **Session Keys**: Scoped, time-limited approvals
-- **Rate Limiting**: 100 req/min per wallet
-- **OFAC Screening**: Optional compliance module
-- **Audit Trail**: Complete transaction logging
-
-### Security Audits
-- Smart contracts audited by [CertiK/Trail of Bits] (pending)
-- Bug bounty program: [Link] (pending)
-
----
-
-## 📊 Roadmap
-
-### Phase 0: MVP (Weeks 1-8) ✅
-- [x] Chat-based swap interface
-- [x] Wallet authentication
-- [x] Portfolio view
-- [x] Transaction simulation
-
-### Phase 1: Alpha (Weeks 9-16) 🚧
-- [ ] DCA automation (Anchor program)
-- [ ] Portfolio risk analysis
-- [ ] Session keys
-- [ ] Email notifications
-
-### Phase 2: Beta (Weeks 17-24) 📋
-- [ ] Multi-sig integration (DAOs)
-- [ ] Public REST API
-- [ ] Custom agent framework
-- [ ] Advanced risk analytics
-
-### Phase 3: GA (Month 7+) 🔮
-- [ ] Cross-chain support (Ethereum, Polygon)
-- [ ] AI agent marketplace
-- [ ] Institutional compliance suite
-- [ ] Decentralized governance
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](./docs/guides/contributing.md) for details.
-
-### Development Workflow
-
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create feature branch (`git checkout -b feature/amazing`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing`)
+5. Open Pull Request
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
 ## 🙏 Acknowledgments
 
-- [Solana Foundation](https://solana.com/)
-- [Anchor Framework](https://www.anchor-lang.com/)
-- [LangChain](https://www.langchain.com/)
-- [Jupiter Aggregator](https://jup.ag/)
-- [Helius](https://helius.dev/)
+- [Solana](https://solana.com/) - Blockchain infrastructure
+- [Jupiter](https://jup.ag/) - DEX aggregation
+- [LangChain](https://langchain.com/) - AI framework
+- [Anthropic](https://anthropic.com/) - Claude AI
 
 ---
 
-## 📞 Contact
-
-- **Website**: [solanacopilot.com](https://solanacopilot.com)
-- **Twitter**: [@SolanaCopilot](https://twitter.com/SolanaCopilot)
-- **Discord**: [Join our community](https://discord.gg/solanacopilot)
-- **Email**: support@solanacopilot.com
-
----
-
-## ⚠️ Disclaimer
-
-Solana Copilot is not financial advice. Cryptocurrency transactions are non-reversible and subject to smart contract risks. Use at your own risk. No custody of user funds. Always verify transactions before signing.
-
----
-
-**Built with ❤️ by the Solana Copilot Team**
+<p align="center">
+  <strong>Built with ❤️ for the Solana ecosystem</strong>
+</p>

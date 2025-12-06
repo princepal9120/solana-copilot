@@ -7,8 +7,8 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
-from app.core.security import get_current_user
-from app.models.user import User
+from app.api.v1.auth import get_current_user
+from app.models import User
 
 router = APIRouter(prefix="/session-keys", tags=["session-keys"])
 

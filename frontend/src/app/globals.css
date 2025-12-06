@@ -25,237 +25,105 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  
+  --font-sans: Space Grotesk, Inter, sans-serif;
+  --font-mono: JetBrains Mono, monospace;
 
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --font-serif: var(--font-serif);
+  --radius-none: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-
-  --shadow-2xs: var(--shadow-2xs);
-  --shadow-xs: var(--shadow-xs);
-  --shadow-sm: var(--shadow-sm);
-  --shadow: var(--shadow);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-  --shadow-xl: var(--shadow-xl);
-  --shadow-2xl: var(--shadow-2xl);
-
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
-  --animate-fade-in: fade-in 0.3s ease-out;
-  --animate-slide-in-from-bottom: slide-in-from-bottom 0.3s ease-out;
-  --animate-aurora: aurora 10s infinite linear;
-
-  @keyframes accordion-down {
-    from {
-      height: 0
-    }
-
-    to {
-      height: var(--radix-accordion-content-height)
-    }
-  }
-
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height)
-    }
-
-    to {
-      height: 0
-    }
-  }
-
-  @keyframes fade-in {
-    from {
-      opacity: 0
-    }
-
-    to {
-      opacity: 1
-    }
-  }
-
-  @keyframes slide-in-from-bottom {
-    from {
-      transform: translateY(100%)
-    }
-
-    to {
-      transform: translateY(0)
-    }
-  }
-
-  @keyframes aurora {
-    0% {
-      background-position: 0% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
-    }
-
-    100% {
-      background-position: 0% 50%;
-    }
-  }
+  --shadow-neo: 8px 8px 0px #000000;
+  --shadow-neo-hover: 12px 12px 0px #9945FF;
+  --shadow-neo-active: 4px 4px 0px #000000;
 }
 
-/* ===== LANDING PAGE THEME (Fixed - Oceanic Teal, No Dark Mode) ===== */
+/* ===== LANDING PAGE THEME (Neo-Brutalist) ===== */
 @layer base {
   :root {
-    --background: hsl(210 40% 98%);
-    --foreground: hsl(215 25% 27%);
+    --background: hsl(0 0% 100%); /* White */
+    --foreground: hsl(0 0% 0%); /* Black */
     --card: hsl(0 0% 100%);
-    --card-foreground: hsl(215 25% 27%);
+    --card-foreground: hsl(0 0% 0%);
     --popover: hsl(0 0% 100%);
-    --popover-foreground: hsl(215 25% 27%);
-    --primary: hsl(195 67% 38%);
+    --popover-foreground: hsl(0 0% 0%);
+    --primary: hsl(268 100% 63.5%); /* Solana Purple */
     --primary-foreground: hsl(0 0% 100%);
-    --secondary: hsl(215 16% 47%);
-    --secondary-foreground: hsl(0 0% 100%);
-    --muted: hsl(210 40% 96.1%);
-    --muted-foreground: hsl(215.4 16.3% 46.9%);
-    --accent: hsl(195 67% 95%);
-    --accent-foreground: hsl(195 67% 38%);
-    --destructive: hsl(350 89% 60%);
+    --secondary: hsl(155 89% 51%); /* Electric Lime */
+    --secondary-foreground: hsl(0 0% 0%);
+    --muted: hsl(0 0% 96%);
+    --muted-foreground: hsl(0 0% 40%);
+    --accent: hsl(155 89% 51%);
+    --accent-foreground: hsl(0 0% 0%);
+    --destructive: hsl(0 84% 60%);
     --destructive-foreground: hsl(0 0% 100%);
-    --border: hsl(214.3 31.8% 91.4%);
-    --input: hsl(214.3 31.8% 91.4%);
-    --ring: hsl(195 67% 38%);
-    --chart-1: hsl(195 67% 38%);
-    --chart-2: hsl(195 60% 45%);
-    --chart-3: hsl(195 55% 50%);
-    --chart-4: hsl(195 50% 55%);
-    --chart-5: hsl(195 45% 60%);
-    --sidebar: hsl(210 40% 96.1%);
-    --sidebar-foreground: hsl(215 25% 27%);
-    --sidebar-primary: hsl(195 67% 38%);
-    --sidebar-primary-foreground: hsl(0 0% 100%);
-    --sidebar-accent: hsl(195 67% 95%);
-    --sidebar-accent-foreground: hsl(195 67% 38%);
-    --sidebar-border: hsl(214.3 31.8% 91.4%);
-    --sidebar-ring: hsl(195 67% 38%);
-    --font-sans: Inter, sans-serif;
-    --font-serif: Merriweather, serif;
-    --font-mono: JetBrains Mono, monospace;
-    --radius: 0.75rem;
-    --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.1);
-    --shadow-sm: 0px 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow: 0px 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-md: 0px 6px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0px 10px 15px -3px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0px 20px 25px -5px hsl(0 0% 0% / 0.1);
-    --shadow-2xl: 0px 25px 50px -12px hsl(0 0% 0% / 0.25);
+    --border: hsl(0 0% 0%); /* Black Borders */
+    --input: hsl(0 0% 0%);
+    --ring: hsl(268 100% 63.5%);
+    --radius: 0px;
+    
+    /* Chart Colors for Landing Page (if any) */
+    --chart-1: hsl(268 100% 63.5%);
+    --chart-2: hsl(155 89% 51%);
+    --chart-3: hsl(0 0% 0%);
+    --chart-4: hsl(0 0% 40%);
+    --chart-5: hsl(0 0% 60%);
   }
 }
 
-/* ===== DASHBOARD THEME (Scoped - Purple/Indigo with Dark Mode) ===== */
+/* ===== DASHBOARD THEME (Softened Neo-Brutalist) ===== */
 .dashboard-theme {
-  --background: hsl(210 40% 98.04%);
-  --foreground: hsl(217.24 32.58% 17.45%);
-  --card: hsl(0 0% 100%);
-  --card-foreground: hsl(217.24 32.58% 17.45%);
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(217.24 32.58% 17.45%);
-  --primary: hsl(238.73 83.53% 66.67%);
+  --background: hsl(0 0% 10%); /* Deep Charcoal #1A1A1A */
+  --foreground: hsl(0 0% 100%); /* Pure White */
+  --card: hsl(0 0% 16.5%); /* Lighter Charcoal #2A2A2A */
+  --card-foreground: hsl(0 0% 100%);
+  --popover: hsl(0 0% 16.5%);
+  --popover-foreground: hsl(0 0% 100%);
+  --primary: hsl(268 100% 63.5%); /* Solana Purple */
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(220 13.04% 90.98%);
-  --secondary-foreground: hsl(216.92 19.12% 26.67%);
-  --muted: hsl(220 14.29% 95.88%);
-  --muted-foreground: hsl(220 8.94% 46.08%);
-  --accent: hsl(226.45 100% 93.92%);
-  --accent-foreground: hsl(216.92 19.12% 26.67%);
-  --destructive: hsl(0 84.24% 60.2%);
+  --secondary: hsl(0 0% 23%); /* #3A3A3A */
+  --secondary-foreground: hsl(0 0% 100%);
+  --muted: hsl(0 0% 23%);
+  --muted-foreground: hsl(0 0% 60%);
+  --accent: hsl(268 100% 63.5%);
+  --accent-foreground: hsl(0 0% 100%);
+  --destructive: hsl(0 84% 60%);
   --destructive-foreground: hsl(0 0% 100%);
-  --border: hsl(216 12.2% 83.92%);
-  --input: hsl(216 12.2% 83.92%);
-  --ring: hsl(238.73 83.53% 66.67%);
-  --chart-1: hsl(238.73 83.53% 66.67%);
-  --chart-2: hsl(243.4 75.36% 58.63%);
-  --chart-3: hsl(244.52 57.94% 50.59%);
-  --chart-4: hsl(243.65 54.5% 41.37%);
-  --chart-5: hsl(242.17 47.43% 34.31%);
-  --sidebar: hsl(220 14.29% 95.88%);
-  --sidebar-foreground: hsl(217.24 32.58% 17.45%);
-  --sidebar-primary: hsl(238.73 83.53% 66.67%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(226.45 100% 93.92%);
-  --sidebar-accent-foreground: hsl(216.92 19.12% 26.67%);
-  --sidebar-border: hsl(216 12.2% 83.92%);
-  --sidebar-ring: hsl(238.73 83.53% 66.67%);
-  --font-sans: Inter, sans-serif;
-  --font-serif: Merriweather, serif;
-  --font-mono: JetBrains Mono, monospace;
-  --radius: 0.5rem;
-  --shadow-2xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
-  --shadow-xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0px 4px 8px -1px hsl(0 0% 0% / 0.1), 0px 1px 2px -2px hsl(0 0% 0% / 0.1);
-  --shadow: 0px 4px 8px -1px hsl(0 0% 0% / 0.1), 0px 1px 2px -2px hsl(0 0% 0% / 0.1);
-  --shadow-md: 0px 4px 8px -1px hsl(0 0% 0% / 0.1), 0px 2px 4px -2px hsl(0 0% 0% / 0.1);
-  --shadow-lg: 0px 4px 8px -1px hsl(0 0% 0% / 0.1), 0px 4px 6px -2px hsl(0 0% 0% / 0.1);
-  --shadow-xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.1), 0px 8px 10px -2px hsl(0 0% 0% / 0.1);
-  --shadow-2xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.25);
-}
+  --border: hsl(0 0% 23%); /* #3A3A3A */
+  --input: hsl(0 0% 23%);
+  --ring: hsl(268 100% 63.5%);
+  --radius: 0.5rem; /* Softened corners for dashboard */
 
-/* Dashboard Dark Mode - Only applies within .dashboard-theme */
-.dashboard-theme.dark {
-  --background: hsl(222.22 47.37% 11.18%);
-  --foreground: hsl(214.29 31.82% 91.37%);
-  --card: hsl(217.24 32.58% 17.45%);
-  --card-foreground: hsl(214.29 31.82% 91.37%);
-  --popover: hsl(217.24 32.58% 17.45%);
-  --popover-foreground: hsl(214.29 31.82% 91.37%);
-  --primary: hsl(234.45 89.47% 73.92%);
-  --primary-foreground: hsl(222.22 47.37% 11.18%);
-  --secondary: hsl(217.78 23.08% 22.94%);
-  --secondary-foreground: hsl(216 12.2% 83.92%);
-  --muted: hsl(217.24 40.85% 13.92%);
-  --muted-foreground: hsl(217.89 10.61% 64.9%);
-  --accent: hsl(216.92 19.12% 26.67%);
-  --accent-foreground: hsl(216 12.2% 83.92%);
-  --destructive: hsl(0 84.24% 60.2%);
-  --destructive-foreground: hsl(222.22 47.37% 11.18%);
-  --border: hsl(215 13.79% 34.12%);
-  --input: hsl(215 13.79% 34.12%);
-  --ring: hsl(234.45 89.47% 73.92%);
-  --chart-1: hsl(234.45 89.47% 73.92%);
-  --chart-2: hsl(238.73 83.53% 66.67%);
-  --chart-3: hsl(243.4 75.36% 58.63%);
-  --chart-4: hsl(244.52 57.94% 50.59%);
-  --chart-5: hsl(243.65 54.5% 41.37%);
-  --sidebar: hsl(217.24 32.58% 17.45%);
-  --sidebar-foreground: hsl(214.29 31.82% 91.37%);
-  --sidebar-primary: hsl(234.45 89.47% 73.92%);
-  --sidebar-primary-foreground: hsl(222.22 47.37% 11.18%);
-  --sidebar-accent: hsl(216.92 19.12% 26.67%);
-  --sidebar-accent-foreground: hsl(216 12.2% 83.92%);
-  --sidebar-border: hsl(215 13.79% 34.12%);
-  --sidebar-ring: hsl(234.45 89.47% 73.92%);
+  /* Chart Colors for Dashboard */
+  --chart-1: hsl(268 100% 63.5%);
+  --chart-2: hsl(155 89% 51%);
+  --chart-3: hsl(38 92% 50%);
+  --chart-4: hsl(0 84% 60%);
+  --chart-5: hsl(0 0% 60%);
 }
 
 @layer base {
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+@utility neo-shadow {
+  box-shadow: 8px 8px 0px #000000;
+}
+@utility neo-shadow-hover {
+  box-shadow: 12px 12px 0px #9945FF;
+}
+@utility neo-shadow-active {
+  box-shadow: 4px 4px 0px #000000;
+}
+@utility neo-border {
+  border: 4px solid #000000;
 }
 
 /* Custom Scrollbar */
@@ -274,95 +142,4 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/50;
-}
-
-/* Glassmorphism Utilities */
-@utility glass {
-  @apply bg-white/70 backdrop-blur-md border border-white/50;
-  box-shadow: 0 4px 24px rgba(32, 128, 160, 0.08);
-}
-
-@utility glass-dark {
-  @apply bg-black/40 backdrop-blur-md border border-white/10 shadow-lg;
-}
-
-@utility glass-card {
-  @apply bg-white/70 backdrop-blur-md border border-white/50 rounded-xl;
-  box-shadow: 0 4px 24px rgba(32, 128, 160, 0.08);
-}
-
-@utility aurora-gradient {
-  background: linear-gradient(135deg, hsl(var(--primary)/0.1) 0%, hsl(var(--secondary)/0.1) 100%);
-}
-
-/* ============================================
-   Mobile Responsive Utilities
-   ============================================ */
-
-/* Touch-friendly minimum target size (44px per Apple guidelines) */
-@utility touch-target {
-  min-height: 44px;
-  min-width: 44px;
-}
-
-/* Responsive container with proper padding */
-@utility container-responsive {
-  @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-}
-
-/* Card with responsive padding */
-@utility card-responsive {
-  @apply p-4 sm:p-6 rounded-xl sm:rounded-2xl;
-}
-
-/* Safe area for notched devices */
-.safe-area-top {
-  padding-top: env(safe-area-inset-top, 0);
-}
-
-.safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0);
-}
-
-/* Bottom sheet animation for mobile modals */
-.bottom-sheet {
-  animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-}
-
-/* Scrollable container for mobile tables */
-.mobile-scroll-x {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Hide scrollbar on touch devices */
-@media (hover: none) and (pointer: coarse) {
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
-
-/* Prevent zoom on input focus (iOS) */
-@supports (-webkit-touch-callout: none) {
-
-  input,
-  select,
-  textarea {
-    font-size: 16px !important;
-  }
 }

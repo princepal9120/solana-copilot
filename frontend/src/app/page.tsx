@@ -1,84 +1,73 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Shield, Zap, TrendingUp, Activity, Check, Quote } from "lucide-react";
-import { GlassCard } from "@/components/ui/glass-card";
+import { ArrowRight, Sparkles, Shield, Zap, TrendingUp, Activity, Check, Lock, Terminal } from "lucide-react";
 import HeroChatPreview from "@/components/landing/HeroChatPreview";
+import { motion } from "framer-motion";
 
-const testimonials = [
+const features = [
     {
-        quote: "Reduced my trading time by 80%. The AI just gets what I want to do.",
-        name: "Alex Chen",
-        role: "DeFi Trader",
-        initials: "AC",
+        title: "Smart Swaps",
+        icon: <Sparkles className="h-8 w-8 text-black" />,
+        description: "Jupiter-optimized routing across Orca, Raydium, Marinade. Pre-simulation shows exact output, fees, and slippage before you sign.",
+        color: "bg-primary",
     },
     {
-        quote: "Finally a wallet that understands me. No more clicking through 10 screens.",
-        name: "Jamie Rodriguez",
-        role: "New to Crypto",
-        initials: "JR",
+        title: "Portfolio Analysis",
+        icon: <TrendingUp className="h-8 w-8 text-black" />,
+        description: "Real-time PnL tracking, 90-day volatility, max drawdown, Value-at-Risk (95%), and AI risk insights with rebalancing suggestions.",
+        color: "bg-secondary",
     },
     {
-        quote: "Our DAO treasury management is now fully automated. Game changer.",
-        name: "Morgan Smith",
-        role: "DAO Treasurer",
-        initials: "MS",
+        title: "DCA Automation",
+        icon: <Activity className="h-8 w-8 text-black" />,
+        description: "Create recurring buys with custom schedules. Pause/resume/delete with one click. View automation dashboard with execution history.",
+        color: "bg-white",
     },
 ];
 
-const pricingPlans = [
+const trustPoints = [
     {
-        name: "Free",
-        price: "$0",
-        period: "forever",
-        description: "Perfect for getting started",
-        features: ["Chat Trading", "3 DCA Automations", "Risk Analytics", "Email Support"],
-        cta: "Get Started",
-        highlighted: false,
+        title: "Sign-only authentication",
+        description: "No private keys stored. All transactions signed on your device.",
+        icon: <Lock className="h-6 w-6 text-primary" />,
     },
     {
-        name: "Pro",
-        price: "$9",
-        period: "/month",
-        description: "For active traders",
-        features: ["Everything in Free", "Unlimited Automations", "API Access", "Priority Support", "Advanced Analytics"],
-        cta: "Upgrade to Pro",
-        highlighted: true,
+        title: "Transaction Simulation",
+        description: "Every transaction simulated on-chain before execution. See exact output amounts, gas fees, and risks.",
+        icon: <Terminal className="h-6 w-6 text-primary" />,
     },
     {
-        name: "Enterprise",
-        price: "Custom",
-        period: "",
-        description: "For teams and DAOs",
-        features: ["Everything in Pro", "Multi-sig Support", "Dedicated Account Manager", "Custom Integrations", "SLA Guarantee"],
-        cta: "Contact Sales",
-        highlighted: false,
+        title: "AI Reasoning",
+        description: "AI reasoning displayed inline. Understand why the copilot suggests each action.",
+        icon: <Sparkles className="h-6 w-6 text-primary" />,
     },
 ];
+
+const protocols = ["Jupiter", "Orca", "Raydium", "Marinade", "Magic Eden", "Birdeye"];
 
 export default function LandingPage() {
     return (
-        <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+        <div className="min-h-screen bg-white relative overflow-hidden flex flex-col font-sans text-black">
             {/* Navbar */}
-            <header className="fixed top-0 w-full z-50 border-b border-white/10 bg-white/70 backdrop-blur-md">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                            <Sparkles className="text-white h-5 w-5" />
+            <header className="fixed top-0 w-full z-50 border-b-4 border-black bg-white">
+                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary border-2 border-black flex items-center justify-center shadow-[4px_4px_0px_#000000]">
+                            <Sparkles className="text-white h-6 w-6" />
                         </div>
-                        <span className="font-bold text-xl text-slate-800">Solana Copilot</span>
+                        <span className="font-bold text-2xl tracking-tight">Solana Copilot</span>
                     </div>
                     <nav className="hidden md:flex items-center gap-8">
-                        <Link href="#features" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Features</Link>
-                        <Link href="#testimonials" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Testimonials</Link>
-                        <Link href="#pricing" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Pricing</Link>
+                        <Link href="#features" className="text-base font-bold hover:text-primary transition-colors uppercase tracking-wide">Features</Link>
+                        <Link href="#trust" className="text-base font-bold hover:text-primary transition-colors uppercase tracking-wide">Security</Link>
+                        <Link href="#pricing" className="text-base font-bold hover:text-primary transition-colors uppercase tracking-wide">Pricing</Link>
                     </nav>
                     <div className="flex items-center gap-4">
-                        <Link href="/login">
-                            <Button variant="ghost" className="text-slate-600 hover:text-primary">Log In</Button>
-                        </Link>
                         <Link href="/dashboard">
-                            <Button className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
+                            <Button className="bg-secondary hover:bg-secondary/90 text-black border-2 border-black shadow-[4px_4px_0px_#000000] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_#000000] transition-all font-bold text-base h-12 px-6 rounded-none">
                                 Launch App
                             </Button>
                         </Link>
@@ -87,218 +76,150 @@ export default function LandingPage() {
             </header>
 
             {/* Hero Section */}
-            <section className="pt-32 pb-20 px-6 relative z-10">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div className="space-y-8">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium">
+            <section className="pt-40 pb-20 px-6 relative z-10">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className="space-y-8"
+                    >
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border-2 border-black text-black text-sm font-bold uppercase tracking-wider shadow-[4px_4px_0px_#000000]">
                             <Sparkles className="h-4 w-4" />
                             <span>AI-Powered DeFi Automation</span>
                         </div>
-                        <h1 className="text-5xl md:text-6xl font-bold text-slate-900 leading-[1.1] tracking-tight">
+                        <h1 className="text-6xl md:text-7xl font-bold leading-[1.1] tracking-tight">
                             Your AI Financial <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-teal-400">Advisor on Solana</span>
+                            <span className="text-primary underline decoration-4 decoration-black underline-offset-4">Advisor on Solana</span>
                         </h1>
-                        <p className="text-lg text-slate-600 max-w-lg leading-relaxed">
-                            Execute swaps, automate DCAs, and analyze portfolio risk—all through natural language. No gas wars, no complexity.
+                        <p className="text-xl text-gray-800 max-w-lg leading-relaxed font-medium border-l-4 border-secondary pl-6">
+                            Execute trades, analyze risk, and automate strategies in plain English. No complex UIs, just results.
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex flex-col sm:flex-row gap-4 pt-4">
                             <Link href="/dashboard">
-                                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white h-12 px-8 text-base shadow-xl shadow-primary/20 w-full sm:w-auto">
-                                    Start Trading Smarter <ArrowRight className="ml-2 h-4 w-4" />
+                                <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-black border-2 border-black shadow-[6px_6px_0px_#000000] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_#000000] transition-all font-bold text-lg h-14 px-10 rounded-none w-full sm:w-auto">
+                                    Connect Wallet <ArrowRight className="ml-2 h-5 w-5" />
                                 </Button>
                             </Link>
-                            <Button size="lg" variant="outline" className="h-12 px-8 text-base border-slate-300 text-slate-700 hover:bg-slate-50 w-full sm:w-auto">
-                                View Documentation
-                            </Button>
                         </div>
-
-                        <div className="flex items-center gap-4 pt-4">
-                            <div className="flex -space-x-3">
-                                {[1, 2, 3, 4].map((i) => (
-                                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200" />
-                                ))}
-                            </div>
-                            <p className="text-sm text-slate-500">Trusted by <span className="font-bold text-slate-900">50,000+</span> traders</p>
-                        </div>
-                    </div>
+                    </motion.div>
 
                     {/* Hero Visual - Animated Chat Preview */}
                     <HeroChatPreview />
                 </div>
             </section>
 
-            {/* Features Grid (Bento) */}
-            <section id="features" className="py-20 px-6 bg-slate-50/50">
+            {/* Feature Grid (Bento) */}
+            <section id="features" className="py-24 px-6 bg-gray-50 border-t-4 border-black">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Everything you need to trade smarter</h2>
-                        <p className="text-slate-600 max-w-2xl mx-auto">
-                            Replace your complex trading terminal with a simple conversation.
+                        <h2 className="text-4xl md:text-5xl font-bold mb-6">Power features for power users</h2>
+                        <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
+                            Everything you need to dominate DeFi, simplified into a chat.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <GlassCard className="md:col-span-2 p-8 bg-white/60">
-                            <div className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
-                                <Sparkles className="h-6 w-6 text-primary" />
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-2">Natural Language Trading</h3>
-                            <p className="text-slate-600">
-                                "Swap 20 USDC to SOL." The AI handles routing, slippage, and execution instantly.
-                            </p>
-                        </GlassCard>
-                        <GlassCard className="p-8 bg-white/60">
-                            <div className="h-12 w-12 bg-amber-100 rounded-xl flex items-center justify-center mb-6">
-                                <Zap className="h-6 w-6 text-amber-600" />
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-2">DCA Automation</h3>
-                            <p className="text-slate-600">
-                                Set up recurring buys or sells with simple commands.
-                            </p>
-                        </GlassCard>
-                        <GlassCard className="p-8 bg-white/60">
-                            <div className="h-12 w-12 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
-                                <Shield className="h-6 w-6 text-blue-600" />
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-2">Risk Analysis</h3>
-                            <p className="text-slate-600">
-                                Real-time portfolio scoring and volatility alerts.
-                            </p>
-                        </GlassCard>
-                        <GlassCard className="md:col-span-2 p-8 bg-white/60">
-                            <div className="h-12 w-12 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
-                                <Activity className="h-6 w-6 text-purple-600" />
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-2">Portfolio Tracking</h3>
-                            <p className="text-slate-600">
-                                Advanced analytics and PnL tracking across all your Solana wallets.
-                            </p>
-                        </GlassCard>
-                    </div>
-                </div>
-            </section>
-
-            {/* Social Proof / Testimonials */}
-            <section id="testimonials" className="py-20 px-6">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Loved by traders worldwide</h2>
-                        <p className="text-slate-600 max-w-2xl mx-auto">
-                            See what our users are saying about Solana Copilot.
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {testimonials.map((testimonial, index) => (
-                            <GlassCard key={index} className="p-6 bg-white/60 hover:shadow-lg transition-shadow">
-                                <Quote className="h-8 w-8 text-primary/30 mb-4" />
-                                <p className="text-slate-700 mb-6 leading-relaxed">"{testimonial.quote}"</p>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                                        {testimonial.initials}
-                                    </div>
-                                    <div>
-                                        <p className="font-medium text-slate-900 text-sm">{testimonial.name}</p>
-                                        <p className="text-slate-500 text-xs">{testimonial.role}</p>
-                                    </div>
-                                </div>
-                            </GlassCard>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Pricing Section */}
-            <section id="pricing" className="py-20 px-6 bg-slate-50/50">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Simple, transparent pricing</h2>
-                        <p className="text-slate-600 max-w-2xl mx-auto">
-                            Start free, upgrade when you need more power.
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                        {pricingPlans.map((plan, index) => (
-                            <GlassCard
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {features.map((feature, index) => (
+                            <motion.div
                                 key={index}
-                                className={`p-8 ${plan.highlighted
-                                    ? "bg-gradient-to-br from-primary/10 to-teal-500/10 border-primary/30 ring-2 ring-primary/20"
-                                    : "bg-white/60"
-                                    }`}
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.1, duration: 0.5 }}
+                                whileHover={{ y: -8 }}
+                                className={`p-8 border-4 border-black shadow-[8px_8px_0px_#000000] hover:shadow-[12px_12px_0px_#9945FF] transition-all bg-white flex flex-col h-full`}
                             >
-                                {plan.highlighted && (
-                                    <div className="inline-block px-3 py-1 bg-primary text-white text-xs font-bold rounded-full mb-4">
-                                        Most Popular
-                                    </div>
-                                )}
-                                <h3 className="text-xl font-bold text-slate-900 mb-2">{plan.name}</h3>
-                                <div className="flex items-baseline gap-1 mb-2">
-                                    <span className="text-4xl font-bold text-slate-900">{plan.price}</span>
-                                    <span className="text-slate-500 text-sm">{plan.period}</span>
+                                <div className={`w-16 h-16 ${feature.color} border-2 border-black flex items-center justify-center mb-6 shadow-[4px_4px_0px_#000000]`}>
+                                    {feature.icon}
                                 </div>
-                                <p className="text-slate-600 text-sm mb-6">{plan.description}</p>
-                                <ul className="space-y-3 mb-8">
-                                    {plan.features.map((feature, i) => (
-                                        <li key={i} className="flex items-center gap-2 text-sm text-slate-700">
-                                            <Check className="h-4 w-4 text-emerald-500" />
-                                            {feature}
-                                        </li>
-                                    ))}
-                                </ul>
-                                <Button
-                                    className={`w-full ${plan.highlighted
-                                        ? "bg-primary hover:bg-primary/90 text-white"
-                                        : "bg-slate-100 hover:bg-slate-200 text-slate-900"
-                                        }`}
-                                >
-                                    {plan.cta}
-                                </Button>
-                            </GlassCard>
+                                <h3 className="text-2xl font-bold mb-4">{feature.title}</h3>
+                                <p className="text-gray-700 leading-relaxed font-medium">
+                                    {feature.description}
+                                </p>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Bottom CTA Section */}
-            <section className="py-20 px-6 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-teal-500/5" />
-                <div className="max-w-4xl mx-auto text-center relative z-10">
-                    <h2 className="text-4xl font-bold text-slate-900 mb-4">
-                        Join 50,000+ traders automating their portfolios
-                    </h2>
-                    <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
-                        Start trading smarter today. No credit card required. 100% non-custodial.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href="/dashboard">
-                            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white h-14 px-10 text-lg shadow-xl shadow-primary/20">
-                                Start Free <ArrowRight className="ml-2 h-5 w-5" />
+            {/* Trust Section */}
+            <section id="trust" className="py-24 px-6 border-t-4 border-black">
+                <div className="max-w-7xl mx-auto">
+                    <div className="border-4 border-black bg-white p-10 md:p-16 shadow-[12px_12px_0px_#000000]">
+                        <div className="text-center mb-12">
+                            <h2 className="text-4xl font-bold mb-4">Non-Custodial & Transparent</h2>
+                            <div className="w-24 h-2 bg-primary mx-auto"></div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                            {trustPoints.map((point, index) => (
+                                <div key={index} className="flex flex-col items-center text-center space-y-4">
+                                    <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mb-2">
+                                        <div className="text-white">{point.icon}</div>
+                                    </div>
+                                    <h3 className="text-xl font-bold">{point.title}</h3>
+                                    <p className="text-gray-600 font-medium">{point.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Social Proof */}
+            <section className="py-16 px-6 bg-black text-white border-t-4 border-black">
+                <div className="max-w-7xl mx-auto text-center">
+                    <p className="text-gray-400 font-bold uppercase tracking-widest mb-10 text-sm">Powered by Solana's Best Protocols</p>
+                    <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-80">
+                        {protocols.map((protocol, index) => (
+                            <span key={index} className="text-2xl md:text-3xl font-bold font-mono hover:text-primary transition-colors cursor-default">
+                                {protocol}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Pricing/Waitlist */}
+            <section id="pricing" className="py-24 px-6 bg-primary border-t-4 border-black">
+                <div className="max-w-4xl mx-auto text-center">
+                    <div className="bg-white border-4 border-black p-10 md:p-16 shadow-[16px_16px_0px_#000000]">
+                        <h2 className="text-5xl md:text-6xl font-bold mb-6">Join 10,000+ Wallets on Devnet</h2>
+                        <p className="text-xl text-gray-700 mb-10 font-medium">
+                            Mainnet launch Q1 2026 - Free during beta.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+                            <input
+                                type="email"
+                                placeholder="Enter your email"
+                                className="flex-1 h-14 px-6 border-2 border-black bg-gray-50 text-lg font-medium outline-none focus:bg-white transition-colors placeholder:text-gray-400"
+                            />
+                            <Button className="h-14 px-8 bg-black text-white hover:bg-gray-900 border-2 border-black font-bold text-lg rounded-none">
+                                Get Early Access
                             </Button>
-                        </Link>
-                        <Button size="lg" variant="outline" className="h-14 px-10 text-lg border-slate-300 text-slate-700 hover:bg-slate-50">
-                            View Documentation
-                        </Button>
+                        </div>
                     </div>
                 </div>
             </section>
 
             {/* Footer */}
-            <footer className="py-12 px-6 border-t border-slate-200">
+            <footer className="py-12 px-6 bg-white border-t-4 border-black">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                            <Sparkles className="text-white h-5 w-5" />
+                        <div className="w-8 h-8 bg-primary border-2 border-black flex items-center justify-center">
+                            <Sparkles className="text-white h-4 w-4" />
                         </div>
-                        <span className="font-bold text-xl text-slate-800">Solana Copilot</span>
+                        <span className="font-bold text-xl">Solana Copilot</span>
                     </div>
-                    <div className="flex items-center gap-6 text-sm text-slate-600">
+                    <div className="flex items-center gap-8 font-bold text-sm uppercase tracking-wide">
                         <Link href="#" className="hover:text-primary transition-colors">Privacy</Link>
                         <Link href="#" className="hover:text-primary transition-colors">Terms</Link>
-                        <Link href="#" className="hover:text-primary transition-colors">Docs</Link>
-                        <Link href="#" className="hover:text-primary transition-colors">Support</Link>
+                        <Link href="#" className="hover:text-primary transition-colors">Twitter</Link>
+                        <Link href="#" className="hover:text-primary transition-colors">Discord</Link>
                     </div>
-                    <p className="text-sm text-slate-500">© 2025 Solana Copilot. All rights reserved.</p>
+                    <p className="text-sm font-medium text-gray-500">© 2025 Solana Copilot.</p>
                 </div>
             </footer>
         </div>

@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
 const MESSAGES = [
-    { role: "user", text: "What's my SOL balance across all wallets?" },
-    { role: "ai", text: "You have 12.42 SOL across 3 wallets. Total USD value: $2,410." },
-    { role: "user", text: "Show my staking rewards." },
-    { role: "ai", text: "You're earning 7.49% APY. Next reward arrives in 18 hours." },
+    { role: "user", text: "Set up a $100 weekly DCA from USDC to SOL" },
+    { role: "ai", text: "I'll execute a 100 USDC → SOL swap every Monday at 00:00 UTC.", action: "View vault link" },
 ];
 
 const TYPING_SPEED = 40;
@@ -19,7 +18,7 @@ export default function HeroChatPreview() {
     const [displayedText, setDisplayedText] = useState("");
     const [isTyping, setIsTyping] = useState(true);
     const [showCursor, setShowCursor] = useState(true);
-    const [visibleMessages, setVisibleMessages] = useState([]);
+    const [visibleMessages, setVisibleMessages] = useState<any[]>([]);
 
     // Cursor blink effect
     useEffect(() => {
@@ -69,35 +68,31 @@ export default function HeroChatPreview() {
 
     return (
         <motion.div
-            className="relative w-full max-w-md"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            className="relative w-full max-w-md mx-auto"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            whileHover={{ scale: 1.02 }}
         >
-            {/* Gradient glow background - Adjusted to Teal/Blue */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 via-blue-400/20 to-teal-400/20 rounded-2xl blur-[60px] animate-pulse" />
-
-            {/* Chat container - GlassCard Default Style (Light) */}
-            <div className="relative z-10 rounded-2xl border border-white/60 bg-white/70 backdrop-blur-xl p-5 shadow-[0_8px_32px_rgba(32,128,160,0.12)]">
+            {/* Chat container - Neo-Brutalist Style */}
+            <div className="relative z-10 border-4 border-black bg-white p-5 shadow-[8px_8px_0px_#000000]">
                 {/* Header */}
-                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200/60">
+                <div className="flex items-center gap-3 mb-6 pb-3 border-b-4 border-black">
                     <div className="relative">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center shadow-md">
-                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-10 h-10 bg-primary flex items-center justify-center border-2 border-black">
+                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                         </div>
-                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" />
+                        <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-secondary border-2 border-black" />
                     </div>
                     <div>
-                        <p className="text-slate-900 font-semibold text-sm">Solana Copilot</p>
-                        <p className="text-primary text-xs font-medium">Online • AI Agent</p>
+                        <p className="text-black font-bold text-lg leading-none">Solana Copilot</p>
+                        <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mt-1">Online • AI Agent</p>
                     </div>
                 </div>
 
                 {/* Messages container */}
-                <div className="space-y-3 min-h-[180px]">
+                <div className="space-y-4 min-h-[200px]">
                     <AnimatePresence mode="popLayout">
                         {/* Previously completed messages */}
                         {visibleMessages.map((msg) => (
@@ -109,13 +104,24 @@ export default function HeroChatPreview() {
                                 transition={{ duration: 0.3 }}
                                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                             >
-                                <div
-                                    className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm shadow-sm ${msg.role === "user"
-                                        ? "bg-primary text-white rounded-br-md"
-                                        : "bg-white text-slate-700 rounded-bl-md border border-slate-100"
-                                        }`}
-                                >
-                                    {msg.text}
+                                <div className="flex flex-col items-start gap-2 max-w-[90%]">
+                                    <div
+                                        className={`px-4 py-3 text-sm font-medium border-2 border-black shadow-[4px_4px_0px_#000000] ${msg.role === "user"
+                                            ? "bg-primary text-white"
+                                            : "bg-white text-black"
+                                            }`}
+                                    >
+                                        {msg.text}
+                                    </div>
+                                    {msg.action && (
+                                        <motion.button
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            className="px-3 py-1 bg-secondary text-black text-xs font-bold border-2 border-black shadow-[2px_2px_0px_#000000] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_#000000] transition-all flex items-center gap-1"
+                                        >
+                                            {msg.action} <ArrowRight className="w-3 h-3" />
+                                        </motion.button>
+                                    )}
                                 </div>
                             </motion.div>
                         ))}
@@ -130,16 +136,15 @@ export default function HeroChatPreview() {
                                 className={`flex ${currentMessage.role === "user" ? "justify-end" : "justify-start"}`}
                             >
                                 <div
-                                    className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm shadow-sm ${currentMessage.role === "user"
-                                        ? "bg-primary text-white rounded-br-md"
-                                        : "bg-white text-slate-700 rounded-bl-md border border-slate-100"
+                                    className={`max-w-[90%] px-4 py-3 text-sm font-medium border-2 border-black shadow-[4px_4px_0px_#000000] ${currentMessage.role === "user"
+                                        ? "bg-primary text-white"
+                                        : "bg-white text-black"
                                         }`}
                                 >
                                     <span>{displayedText}</span>
                                     <span
-                                        className={`inline-block w-0.5 h-4 ml-0.5 align-middle ${currentMessage.role === "user" ? "bg-white/80" : "bg-primary"
+                                        className={`inline-block w-2 h-4 ml-1 align-middle ${currentMessage.role === "user" ? "bg-white" : "bg-black"
                                             } ${showCursor && isTyping ? "opacity-100" : "opacity-0"}`}
-                                        style={{ transition: "opacity 0.1s" }}
                                     />
                                 </div>
                             </motion.div>
@@ -148,53 +153,23 @@ export default function HeroChatPreview() {
                 </div>
 
                 {/* Input area mock */}
-                <div className="mt-4 pt-3 border-t border-slate-200/60">
-                    <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200/60">
+                <div className="mt-6 pt-4 border-t-4 border-black">
+                    <div className="flex items-center gap-2 px-3 py-3 bg-white border-2 border-black shadow-[4px_4px_0px_#000000]">
                         <input
                             type="text"
-                            placeholder="Ask anything about your wallet..."
+                            placeholder="Type a command..."
                             disabled
-                            className="flex-1 bg-transparent text-sm text-slate-500 placeholder:text-slate-400 outline-none cursor-not-allowed"
+                            className="flex-1 bg-transparent text-sm text-black placeholder:text-gray-400 font-medium outline-none cursor-not-allowed"
                         />
                         <button
                             disabled
-                            className="p-2 rounded-lg bg-primary/10 text-primary opacity-60 cursor-not-allowed"
+                            className="p-2 bg-primary text-white border-2 border-black opacity-100 cursor-not-allowed hover:bg-primary/90"
                         >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                            </svg>
+                            <ArrowRight className="w-4 h-4" />
                         </button>
                     </div>
                 </div>
             </div>
-
-            {/* Floating stats badge */}
-            <motion.div
-                className="absolute -bottom-4 -left-4 px-4 py-2.5 rounded-xl bg-white/90 backdrop-blur-lg border border-white/50 shadow-lg"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5, duration: 0.4 }}
-            >
-                <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-xs text-slate-700 font-medium">Live on Solana</span>
-                </div>
-            </motion.div>
-
-            {/* Floating portfolio badge */}
-            <motion.div
-                className="absolute -top-3 -right-3 px-3 py-2 rounded-xl bg-white/90 backdrop-blur-lg border border-white/50 shadow-lg"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.7, duration: 0.4 }}
-            >
-                <div className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
-                    <span className="text-xs text-emerald-600 font-bold">+24.5%</span>
-                </div>
-            </motion.div>
         </motion.div>
     );
 }

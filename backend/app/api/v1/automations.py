@@ -141,13 +141,25 @@ async def create_automation(
     """
     
     try:
+        # Import vault service for PDA derivation
+        from app.services.vault_service import vault_service
+        
         # Convert frequency to seconds
         frequency_seconds = _parse_frequency(automation.frequency_seconds)
         
         # Calculate next execution time
         next_execution = datetime.utcnow() + timedelta(seconds=frequency_seconds)
         
-        # Create automation
+        # Derive vault PDA for on-chain automations
+        vault_pda = None
+        if automation.automation_type in ["dca", "rebalance"]:
+            vault_pda, _ = vault_service.derive_vault_pda(
+                current_user.wallet_address,
+                automation.source_token,
+                automation.dest_token,
+            )
+        
+        # Create automation with vault PDA
         new_automation = Automation(
             user_id=current_user.id,
             automation_type=automation.automation_type,
@@ -157,7 +169,8 @@ async def create_automation(
             amount=automation.amount,
             frequency_seconds=frequency_seconds,
             next_execution_at=next_execution,
-            status="active",
+            status="pending_deployment" if vault_pda else "active",
+            vault_pda=vault_pda,
             metadata=automation.metadata,
         )
         
@@ -166,10 +179,8 @@ async def create_automation(
         await db.refresh(new_automation)
         
         logger.info(f"Created automation: {new_automation.id} ({new_automation.automation_type})")
-        
-        # TODO: Deploy on-chain vault for DCA/rebalancing
-        # if automation.automation_type in ["dca", "rebalance"]:
-        #     await _deploy_vault(new_automation, current_user.wallet_address)
+        if vault_pda:
+            logger.info(f"Vault PDA: {vault_pda}")
         
         return AutomationResponse.model_validate(new_automation)
     
@@ -476,6 +487,139 @@ async def get_automation_executions(
         )
 
 
+@router.get("/{automation_id}/deploy-instruction")
+async def get_deploy_instruction(
+    automation_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Get the on-chain vault deployment instruction for frontend signing.
+    
+    Args:
+        automation_id: Automation ID
+    
+    Returns:
+        Instruction data for wallet signing
+    """
+    
+    try:
+        from app.services.vault_service import vault_service
+        
+        # Get automation
+        result = await db.execute(
+            select(Automation).where(
+                and_(
+                    Automation.id == automation_id,
+                    Automation.user_id == current_user.id
+                )
+            )
+        )
+        automation = result.scalar_one_or_none()
+        
+        if not automation:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Automation not found"
+            )
+        
+        if automation.automation_type not in ["dca", "rebalance"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="This automation type does not require on-chain vault"
+            )
+        
+        # Build instruction data
+        instruction = await vault_service.build_initialize_instruction(
+            owner=current_user.wallet_address,
+            source_mint=automation.source_token,
+            dest_mint=automation.dest_token,
+            amount_per_cycle=int(automation.amount * 1_000_000),  # Convert to smallest units
+            frequency_seconds=automation.frequency_seconds,
+            total_cycles=100,  # Default to 100 cycles
+        )
+        
+        return {
+            "automation_id": str(automation_id),
+            "instruction": instruction,
+            "vault_pda": automation.vault_pda,
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting deploy instruction: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get deploy instruction: {str(e)}"
+        )
+
+
+@router.post("/{automation_id}/confirm-deployment")
+async def confirm_vault_deployment(
+    automation_id: UUID,
+    tx_hash: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Confirm that the vault has been deployed on-chain.
+    Called after frontend successfully signs and submits the transaction.
+    
+    Args:
+        automation_id: Automation ID
+        tx_hash: Transaction hash from on-chain deployment
+    
+    Returns:
+        Success message
+    """
+    
+    try:
+        # Get automation
+        result = await db.execute(
+            select(Automation).where(
+                and_(
+                    Automation.id == automation_id,
+                    Automation.user_id == current_user.id
+                )
+            )
+        )
+        automation = result.scalar_one_or_none()
+        
+        if not automation:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Automation not found"
+            )
+        
+        # Update automation status
+        automation.status = "active"
+        automation.metadata = automation.metadata or {}
+        automation.metadata["deployment_tx"] = tx_hash
+        automation.next_execution_at = datetime.utcnow() + timedelta(seconds=automation.frequency_seconds)
+        
+        await db.commit()
+        
+        logger.info(f"Vault deployment confirmed for automation {automation_id}: {tx_hash}")
+        
+        return {
+            "success": True,
+            "automation_id": str(automation_id),
+            "vault_pda": automation.vault_pda,
+            "tx_hash": tx_hash,
+            "status": "active",
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error confirming deployment: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to confirm deployment: {str(e)}"
+        )
+
+
 # ============================================
 # Helper Functions
 # ============================================
@@ -489,3 +633,4 @@ def _parse_frequency(frequency: int) -> int:
     # Otherwise, convert from common intervals
     # This is simplified - in production, accept string like "1d", "12h", etc.
     return frequency
+

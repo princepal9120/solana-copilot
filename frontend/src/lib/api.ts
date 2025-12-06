@@ -104,7 +104,16 @@ export const automationsApi = {
     getExecutions: async (automationId: string, limit: number = 50) => {
         const response = await api.get(`/automations/${automationId}/executions?limit=${limit}`);
         return response.data;
-    }
+    },
+    // On-chain vault deployment methods
+    getDeployInstruction: async (automationId: string) => {
+        const response = await api.get(`/automations/${automationId}/deploy-instruction`);
+        return response.data;
+    },
+    confirmDeployment: async (automationId: string, txHash: string) => {
+        const response = await api.post(`/automations/${automationId}/confirm-deployment?tx_hash=${txHash}`);
+        return response.data;
+    },
 };
 
 // Transactions API

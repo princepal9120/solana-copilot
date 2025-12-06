@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/lib/hooks/useAuth';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { connected, publicKey } = useWallet();

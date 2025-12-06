@@ -1,8 +1,59 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Shield, Zap, TrendingUp, Activity } from "lucide-react";
+import { ArrowRight, Sparkles, Shield, Zap, TrendingUp, Activity, Check, Quote } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
+
+const testimonials = [
+    {
+        quote: "Reduced my trading time by 80%. The AI just gets what I want to do.",
+        name: "Alex Chen",
+        role: "DeFi Trader",
+        initials: "AC",
+    },
+    {
+        quote: "Finally a wallet that understands me. No more clicking through 10 screens.",
+        name: "Jamie Rodriguez",
+        role: "New to Crypto",
+        initials: "JR",
+    },
+    {
+        quote: "Our DAO treasury management is now fully automated. Game changer.",
+        name: "Morgan Smith",
+        role: "DAO Treasurer",
+        initials: "MS",
+    },
+];
+
+const pricingPlans = [
+    {
+        name: "Free",
+        price: "$0",
+        period: "forever",
+        description: "Perfect for getting started",
+        features: ["Chat Trading", "3 DCA Automations", "Risk Analytics", "Email Support"],
+        cta: "Get Started",
+        highlighted: false,
+    },
+    {
+        name: "Pro",
+        price: "$9",
+        period: "/month",
+        description: "For active traders",
+        features: ["Everything in Free", "Unlimited Automations", "API Access", "Priority Support", "Advanced Analytics"],
+        cta: "Upgrade to Pro",
+        highlighted: true,
+    },
+    {
+        name: "Enterprise",
+        price: "Custom",
+        period: "",
+        description: "For teams and DAOs",
+        features: ["Everything in Pro", "Multi-sig Support", "Dedicated Account Manager", "Custom Integrations", "SLA Guarantee"],
+        cta: "Contact Sales",
+        highlighted: false,
+    },
+];
 
 export default function LandingPage() {
     return (
@@ -18,8 +69,8 @@ export default function LandingPage() {
                     </div>
                     <nav className="hidden md:flex items-center gap-8">
                         <Link href="#features" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Features</Link>
+                        <Link href="#testimonials" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Testimonials</Link>
                         <Link href="#pricing" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Pricing</Link>
-                        <Link href="#docs" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Docs</Link>
                     </nav>
                     <div className="flex items-center gap-4">
                         <Link href="/login">
@@ -74,7 +125,6 @@ export default function LandingPage() {
                     <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-full blur-[100px] animate-pulse" />
                         <GlassCard className="relative z-10 p-6 border-white/60 shadow-2xl transform rotate-[-2deg] hover:rotate-0 transition-transform duration-500">
-                            {/* Mock Chat Interface */}
                             <div className="space-y-4">
                                 <div className="flex gap-3">
                                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
@@ -104,7 +154,6 @@ export default function LandingPage() {
                             </div>
                         </GlassCard>
 
-                        {/* Floating Elements */}
                         <GlassCard className="absolute -bottom-6 -left-6 p-4 w-48 animate-bounce duration-[3000ms]">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-emerald-100 rounded-lg text-emerald-600">
@@ -170,6 +219,130 @@ export default function LandingPage() {
                     </div>
                 </div>
             </section>
+
+            {/* Social Proof / Testimonials */}
+            <section id="testimonials" className="py-20 px-6">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Loved by traders worldwide</h2>
+                        <p className="text-slate-600 max-w-2xl mx-auto">
+                            See what our users are saying about Solana Copilot.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {testimonials.map((testimonial, index) => (
+                            <GlassCard key={index} className="p-6 bg-white/60 hover:shadow-lg transition-shadow">
+                                <Quote className="h-8 w-8 text-primary/30 mb-4" />
+                                <p className="text-slate-700 mb-6 leading-relaxed">"{testimonial.quote}"</p>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                                        {testimonial.initials}
+                                    </div>
+                                    <div>
+                                        <p className="font-medium text-slate-900 text-sm">{testimonial.name}</p>
+                                        <p className="text-slate-500 text-xs">{testimonial.role}</p>
+                                    </div>
+                                </div>
+                            </GlassCard>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Pricing Section */}
+            <section id="pricing" className="py-20 px-6 bg-slate-50/50">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Simple, transparent pricing</h2>
+                        <p className="text-slate-600 max-w-2xl mx-auto">
+                            Start free, upgrade when you need more power.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                        {pricingPlans.map((plan, index) => (
+                            <GlassCard
+                                key={index}
+                                className={`p-8 ${plan.highlighted
+                                    ? "bg-gradient-to-br from-primary/10 to-teal-500/10 border-primary/30 ring-2 ring-primary/20"
+                                    : "bg-white/60"
+                                    }`}
+                            >
+                                {plan.highlighted && (
+                                    <div className="inline-block px-3 py-1 bg-primary text-white text-xs font-bold rounded-full mb-4">
+                                        Most Popular
+                                    </div>
+                                )}
+                                <h3 className="text-xl font-bold text-slate-900 mb-2">{plan.name}</h3>
+                                <div className="flex items-baseline gap-1 mb-2">
+                                    <span className="text-4xl font-bold text-slate-900">{plan.price}</span>
+                                    <span className="text-slate-500 text-sm">{plan.period}</span>
+                                </div>
+                                <p className="text-slate-600 text-sm mb-6">{plan.description}</p>
+                                <ul className="space-y-3 mb-8">
+                                    {plan.features.map((feature, i) => (
+                                        <li key={i} className="flex items-center gap-2 text-sm text-slate-700">
+                                            <Check className="h-4 w-4 text-emerald-500" />
+                                            {feature}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <Button
+                                    className={`w-full ${plan.highlighted
+                                        ? "bg-primary hover:bg-primary/90 text-white"
+                                        : "bg-slate-100 hover:bg-slate-200 text-slate-900"
+                                        }`}
+                                >
+                                    {plan.cta}
+                                </Button>
+                            </GlassCard>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Bottom CTA Section */}
+            <section className="py-20 px-6 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-teal-500/5" />
+                <div className="max-w-4xl mx-auto text-center relative z-10">
+                    <h2 className="text-4xl font-bold text-slate-900 mb-4">
+                        Join 50,000+ traders automating their portfolios
+                    </h2>
+                    <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
+                        Start trading smarter today. No credit card required. 100% non-custodial.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Link href="/dashboard">
+                            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white h-14 px-10 text-lg shadow-xl shadow-primary/20">
+                                Start Free <ArrowRight className="ml-2 h-5 w-5" />
+                            </Button>
+                        </Link>
+                        <Button size="lg" variant="outline" className="h-14 px-10 text-lg border-slate-300 text-slate-700 hover:bg-slate-50">
+                            View Documentation
+                        </Button>
+                    </div>
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="py-12 px-6 border-t border-slate-200">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                            <Sparkles className="text-white h-5 w-5" />
+                        </div>
+                        <span className="font-bold text-xl text-slate-800">Solana Copilot</span>
+                    </div>
+                    <div className="flex items-center gap-6 text-sm text-slate-600">
+                        <Link href="#" className="hover:text-primary transition-colors">Privacy</Link>
+                        <Link href="#" className="hover:text-primary transition-colors">Terms</Link>
+                        <Link href="#" className="hover:text-primary transition-colors">Docs</Link>
+                        <Link href="#" className="hover:text-primary transition-colors">Support</Link>
+                    </div>
+                    <p className="text-sm text-slate-500">© 2025 Solana Copilot. All rights reserved.</p>
+                </div>
+            </footer>
         </div>
     );
 }

@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Zap, Plus, Clock, TrendingUp, TrendingDown, RefreshCw, Pause, Play, Trash2, Settings, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { automationsApi } from "@/lib/api";
+import { CreateAutomationModal } from "@/components/automations/CreateAutomationModal";
 
 interface Automation {
     id: string;
@@ -61,6 +62,7 @@ export default function AutomationsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
         fetchAutomations();
@@ -151,7 +153,10 @@ export default function AutomationsPage() {
                     <h1 className="text-3xl font-bold text-foreground">Automations</h1>
                     <p className="text-muted-foreground">Manage your trading rules and strategies</p>
                 </div>
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                <Button
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                    onClick={() => setShowCreateModal(true)}
+                >
                     <Plus className="h-4 w-4 mr-2" />
                     New Automation
                 </Button>
@@ -337,6 +342,15 @@ export default function AutomationsPage() {
                     </div>
                 )}
             </GlassCard>
+
+            {/* Create Automation Modal */}
+            <CreateAutomationModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onSuccess={() => {
+                    fetchAutomations();
+                }}
+            />
         </div>
     );
 }

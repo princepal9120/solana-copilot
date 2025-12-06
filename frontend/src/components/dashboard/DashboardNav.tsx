@@ -3,13 +3,14 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, LineChart, Zap, Settings, Wallet } from "lucide-react";
+import { LayoutDashboard, LineChart, Zap, Settings, Wallet, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const navItems = [
     { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
     { icon: LineChart, label: "Portfolio", href: "/dashboard/portfolio" },
+    { icon: ShieldCheck, label: "Risk Analysis", href: "/dashboard/risk" },
     { icon: Zap, label: "Automations", href: "/dashboard/automations" },
     { icon: Settings, label: "Settings", href: "/dashboard/settings" },
 ];

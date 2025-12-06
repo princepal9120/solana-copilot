@@ -1,8 +1,7 @@
 # Solana Copilot - AI Agent Wallet
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Next.js](https://img.shields.io/badge/Next.js-16
-.2-black)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com/)
 [![Anchor](https://img.shields.io/badge/Anchor-0.30-purple)](https://www.anchor-lang.com/)
 [![Solana](https://img.shields.io/badge/Solana-1.18-9945FF)](https://solana.com/)

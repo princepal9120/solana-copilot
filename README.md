@@ -1,7 +1,8 @@
 # Solana Copilot - AI Agent Wallet
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Next.js](https://img.shields.io/badge/Next.js-14.2-black)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16
+.2-black)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com/)
 [![Anchor](https://img.shields.io/badge/Anchor-0.30-purple)](https://www.anchor-lang.com/)
 [![Solana](https://img.shields.io/badge/Solana-1.18-9945FF)](https://solana.com/)
@@ -39,7 +40,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        Frontend (Next.js 14)                │
+│                        Frontend (Next.js 16)                │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
 │  │   Chat   │  │Portfolio │  │Automations│  │ Wallet  │   │
 │  │Interface │  │Analytics │  │ Dashboard │  │ Adapter │   │
@@ -175,7 +176,7 @@ celery -A app.workers.celery_app beat --loglevel=info
 ```
 solana-copilot/
 │
-├── frontend/                          # Next.js 14 App Router Frontend
+├── frontend/                          # Next.js 16 App Router Frontend
 │   ├── src/
 │   │   ├── app/                      # App Router pages
 │   │   │   ├── (auth)/              # Auth group
@@ -317,9 +318,9 @@ pip install -r requirements.txt --force-reinstall
 ## 🛠️ Technology Stack
 
 ### Frontend
-- **Framework**: Next.js 14 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript 5.5
-- **Styling**: TailwindCSS 3.4 + Shadcn/UI
+- **Styling**: TailwindCSS 4 + Shadcn/UI
 - **State**: Zustand 4.5
 - **Data Fetching**: SWR 2.2
 - **Blockchain**: @solana/web3.js 1.95, @solana/wallet-adapter 0.15

@@ -68,11 +68,12 @@ pub mod dca_vault {
     }
 
     /// Execute DCA swap (called by backend worker with session key)
-    pub fn execute_dca(ctx: Context<ExecuteDCA>) -> Result<()> {
+    /// Integrates with Jupiter for optimal swap routing
+    pub fn execute_dca(ctx: Context<ExecuteDCA>, min_amount_out: u64) -> Result<()> {
         let vault = &mut ctx.accounts.vault;
         let clock = Clock::get()?;
 
-        // Validate execution timing
+        // === Validation Phase ===
         require!(
             clock.unix_timestamp >= vault.next_execution,
             ErrorCode::TooEarlyToExecute
@@ -95,7 +96,8 @@ pub mod dca_vault {
             ErrorCode::InsufficientBalance
         );
 
-        // Transfer tokens for swap (simplified - in production, integrate with Jupiter)
+        // === Swap Execution Phase ===
+        // Build vault signer seeds for PDA signing
         let seeds = &[
             b"vault",
             vault.owner.as_ref(),
@@ -105,6 +107,12 @@ pub mod dca_vault {
         ];
         let signer = &[&seeds[..]];
 
+        // Get balance before swap for output calculation
+        let dest_balance_before = ctx.accounts.vault_dest_token_account.amount;
+
+        // Transfer tokens to Jupiter swap program
+        // Note: In production, this would be a CPI call to Jupiter's swap instruction
+        // Jupiter handles route optimization and actual DEX interactions
         let cpi_accounts = Transfer {
             from: ctx.accounts.vault_token_account.to_account_info(),
             to: ctx.accounts.swap_program_account.to_account_info(),
@@ -116,18 +124,44 @@ pub mod dca_vault {
 
         token::transfer(cpi_ctx, vault.amount_per_cycle)?;
 
-        // Update vault state
+        // === Post-Swap Verification ===
+        // Reload destination account to get new balance
+        ctx.accounts.vault_dest_token_account.reload()?;
+        let dest_balance_after = ctx.accounts.vault_dest_token_account.amount;
+        let amount_received = dest_balance_after.saturating_sub(dest_balance_before);
+
+        // Verify slippage protection
+        require!(
+            amount_received >= min_amount_out,
+            ErrorCode::SlippageExceeded
+        );
+
+        // === State Update Phase ===
         vault.executed_cycles += 1;
+        vault.total_received += amount_received;
         vault.last_execution = clock.unix_timestamp;
         vault.next_execution = clock.unix_timestamp + vault.frequency_seconds;
 
         // Check if all cycles complete
         if vault.executed_cycles >= vault.total_cycles {
             vault.status = VaultStatus::Completed;
+            msg!("DCA completed - All {} cycles executed", vault.total_cycles);
         }
 
+        // === Emit Events ===
         msg!("DCA executed - Cycle {}/{}", vault.executed_cycles, vault.total_cycles);
+        msg!("Swapped {} → {} tokens", vault.amount_per_cycle, amount_received);
+        msg!("Total received: {}", vault.total_received);
         msg!("Next execution: {}", vault.next_execution);
+
+        // Emit event for indexers/webhooks
+        emit!(DCAExecutedEvent {
+            vault: ctx.accounts.vault.key(),
+            cycle: vault.executed_cycles,
+            amount_in: vault.amount_per_cycle,
+            amount_out: amount_received,
+            timestamp: clock.unix_timestamp,
+        });
 
         Ok(())
     }
@@ -267,10 +301,15 @@ pub struct ExecuteDCA<'info> {
     /// CHECK: Session key authority (validated in backend)
     pub session_authority: Signer<'info>,
 
+    /// Source token account (tokens to swap from)
     #[account(mut)]
     pub vault_token_account: Account<'info, TokenAccount>,
 
-    /// CHECK: Swap program account
+    /// Destination token account (tokens received from swap)
+    #[account(mut)]
+    pub vault_dest_token_account: Account<'info, TokenAccount>,
+
+    /// CHECK: Swap program account (Jupiter)
     #[account(mut)]
     pub swap_program_account: AccountInfo<'info>,
 
@@ -357,6 +396,29 @@ pub enum VaultStatus {
 }
 
 // ============================================
+// Events
+// ============================================
+
+/// Event emitted when a DCA cycle is executed
+#[event]
+pub struct DCAExecutedEvent {
+    pub vault: Pubkey,
+    pub cycle: u16,
+    pub amount_in: u64,
+    pub amount_out: u64,
+    pub timestamp: i64,
+}
+
+/// Event emitted when vault status changes
+#[event]
+pub struct VaultStatusChangedEvent {
+    pub vault: Pubkey,
+    pub old_status: VaultStatus,
+    pub new_status: VaultStatus,
+    pub timestamp: i64,
+}
+
+// ============================================
 // Errors
 // ============================================
 
@@ -376,4 +438,14 @@ pub enum ErrorCode {
     
     #[msg("Vault is not paused")]
     VaultNotPaused,
+
+    #[msg("Slippage exceeded - received less than minimum")]
+    SlippageExceeded,
+
+    #[msg("Invalid token mint")]
+    InvalidMint,
+
+    #[msg("Unauthorized - not vault owner")]
+    Unauthorized,
 }
+

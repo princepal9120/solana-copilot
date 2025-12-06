@@ -294,3 +294,75 @@
 @utility aurora-gradient {
   background: linear-gradient(135deg, hsl(var(--primary)/0.1) 0%, hsl(var(--secondary)/0.1) 100%);
 }
+
+/* ============================================
+   Mobile Responsive Utilities
+   ============================================ */
+
+/* Touch-friendly minimum target size (44px per Apple guidelines) */
+@utility touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Responsive container with proper padding */
+@utility container-responsive {
+  @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Card with responsive padding */
+@utility card-responsive {
+  @apply p-4 sm:p-6 rounded-xl sm:rounded-2xl;
+}
+
+/* Safe area for notched devices */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Bottom sheet animation for mobile modals */
+.bottom-sheet {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Scrollable container for mobile tables */
+.mobile-scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Prevent zoom on input focus (iOS) */
+@supports (-webkit-touch-callout: none) {
+
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

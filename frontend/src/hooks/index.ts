@@ -4,3 +4,4 @@
  */
 
 export { useAsync, useToggle, useFormField, useDebounce } from "./useAsync";
+export { useVaultDeployment } from "./useVaultDeployment";

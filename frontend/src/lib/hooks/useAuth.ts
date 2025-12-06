@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import bs58 from "bs58";
 import { authApi } from "@/lib/api/auth";
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 
 export function useAuth() {

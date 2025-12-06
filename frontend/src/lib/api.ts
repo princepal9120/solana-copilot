@@ -131,3 +131,44 @@ export const transactionsApi = {
         return response.data;
     }
 };
+
+// Session Keys API
+export const sessionKeysApi = {
+    getSessionKeys: async () => {
+        const response = await api.get('/session-keys');
+        return response.data;
+    },
+    createSessionKey: async (data: {
+        name: string;
+        max_amount_per_tx: number;
+        max_total_amount: number;
+        expires_in_days?: number;
+        allowed_programs?: string[];
+    }) => {
+        const response = await api.post('/session-keys', data);
+        return response.data;
+    },
+    getSessionKey: async (id: string) => {
+        const response = await api.get(`/session-keys/${id}`);
+        return response.data;
+    },
+    updateSessionKey: async (id: string, data: {
+        max_amount_per_tx?: number;
+        max_total_amount?: number;
+    }) => {
+        const response = await api.patch(`/session-keys/${id}`, data);
+        return response.data;
+    },
+    revokeSessionKey: async (id: string) => {
+        const response = await api.post(`/session-keys/${id}/revoke`);
+        return response.data;
+    },
+    deleteSessionKey: async (id: string) => {
+        const response = await api.delete(`/session-keys/${id}`);
+        return response.data;
+    },
+    validateSessionKey: async (id: string, programId: string, amount: number) => {
+        const response = await api.post(`/session-keys/${id}/validate?program_id=${programId}&amount=${amount}`);
+        return response.data;
+    }
+};

@@ -18,7 +18,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.core.config import settings
 from app.core.middleware import RateLimitMiddleware, LoggingMiddleware
 from app.db.session import async_engine
-from app.api.v1 import auth, chat, portfolio, transactions, automations
+from app.api.v1 import auth, chat, portfolio, transactions, automations, session_keys
 
 # Configure logging
 logging.basicConfig(
@@ -203,6 +203,7 @@ app.include_router(chat.router, prefix="/api/v1/chat", tags=["Chat"])
 app.include_router(portfolio.router, prefix="/api/v1/portfolio", tags=["Portfolio"])
 app.include_router(transactions.router, prefix="/api/v1/transactions", tags=["Transactions"])
 app.include_router(automations.router, prefix="/api/v1/automations", tags=["Automations"])
+app.include_router(session_keys.router, prefix="/api/v1", tags=["Session Keys"])
 
 
 # ============================================

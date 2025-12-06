@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -9,13 +9,49 @@ import { Label } from "@/components/ui/label";
 import {
     User, Bell, Shield, Palette, Wallet, Globe,
     Moon, Sun, ChevronRight, ExternalLink, Key,
-    Smartphone, Mail, AlertTriangle
+    Smartphone, Mail, AlertTriangle, Plus, Clock, Trash2, Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 
+interface SessionKey {
+    id: string;
+    name: string;
+    publicKey: string;
+    maxPerTx: number;
+    maxTotal: number;
+    spent: number;
+    expiresAt: string;
+    isActive: boolean;
+}
+
+const mockSessionKeys: SessionKey[] = [
+    {
+        id: "1",
+        name: "DCA Automation",
+        publicKey: "Sess1...xK4j",
+        maxPerTx: 50,
+        maxTotal: 1000,
+        spent: 350,
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        isActive: true,
+    },
+    {
+        id: "2",
+        name: "Stop-Loss Protection",
+        publicKey: "Sess2...m9Pq",
+        maxPerTx: 100,
+        maxTotal: 500,
+        spent: 0,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        isActive: true,
+    },
+];
+
 export default function SettingsPage() {
     const { theme, setTheme } = useTheme();
+    const [sessionKeys, setSessionKeys] = useState<SessionKey[]>(mockSessionKeys);
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     const settingsSections = [
         {
@@ -46,6 +82,26 @@ export default function SettingsPage() {
             ]
         },
     ];
+
+    const revokeSessionKey = (id: string) => {
+        setSessionKeys(prev => prev.map(sk =>
+            sk.id === id ? { ...sk, isActive: false } : sk
+        ));
+    };
+
+    const deleteSessionKey = (id: string) => {
+        setSessionKeys(prev => prev.filter(sk => sk.id !== id));
+    };
+
+    const formatExpiry = (isoString: string) => {
+        const date = new Date(isoString);
+        const now = new Date();
+        const diff = date.getTime() - now.getTime();
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        if (days <= 0) return "Expired";
+        if (days === 1) return "1 day";
+        return `${days} days`;
+    };
 
     return (
         <div className="space-y-6">
@@ -95,6 +151,121 @@ export default function SettingsPage() {
                                     <Moon className="h-4 w-4" />
                                     Dark
                                 </button>
+                            </div>
+                        </div>
+                    </GlassCard>
+
+                    {/* Session Keys Section */}
+                    <GlassCard className="p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-3 bg-purple-100 dark:bg-purple-500/20 rounded-xl">
+                                    <Key className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-foreground">Session Keys</h3>
+                                    <p className="text-sm text-muted-foreground">Manage auto-approval for automations</p>
+                                </div>
+                            </div>
+                            <Button size="sm" className="bg-primary hover:bg-primary/90">
+                                <Plus className="h-4 w-4 mr-2" />
+                                Create Session Key
+                            </Button>
+                        </div>
+
+                        {sessionKeys.length === 0 ? (
+                            <div className="text-center py-8 text-muted-foreground">
+                                <Key className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                                <p>No session keys created</p>
+                                <p className="text-sm">Create a session key to enable auto-approval for your automations</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {sessionKeys.map((sk) => (
+                                    <div
+                                        key={sk.id}
+                                        className={cn(
+                                            "p-4 border rounded-xl transition-all",
+                                            sk.isActive ? "border-border bg-card" : "border-border/50 bg-muted/30 opacity-60"
+                                        )}
+                                    >
+                                        <div className="flex items-start justify-between">
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                    <h4 className="font-medium text-foreground">{sk.name}</h4>
+                                                    <span className={cn(
+                                                        "text-xs px-2 py-0.5 rounded-full",
+                                                        sk.isActive
+                                                            ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
+                                                            : "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400"
+                                                    )}>
+                                                        {sk.isActive ? "Active" : "Revoked"}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground font-mono">{sk.publicKey}</p>
+
+                                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                                    <span>
+                                                        Per Tx: <strong className="text-foreground">${sk.maxPerTx}</strong>
+                                                    </span>
+                                                    <span>
+                                                        Total: <strong className="text-foreground">${sk.maxTotal}</strong>
+                                                    </span>
+                                                    <span>
+                                                        Spent: <strong className="text-foreground">${sk.spent}</strong>
+                                                    </span>
+                                                    <span className="flex items-center gap-1">
+                                                        <Clock className="h-3 w-3" />
+                                                        Expires: <strong className="text-foreground">{formatExpiry(sk.expiresAt)}</strong>
+                                                    </span>
+                                                </div>
+
+                                                {/* Progress bar */}
+                                                <div className="w-48">
+                                                    <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                                                        <div
+                                                            className="h-full bg-primary rounded-full"
+                                                            style={{ width: `${Math.min((sk.spent / sk.maxTotal) * 100, 100)}%` }}
+                                                        />
+                                                    </div>
+                                                    <p className="text-xs text-muted-foreground mt-1">
+                                                        {((sk.spent / sk.maxTotal) * 100).toFixed(0)}% of limit used
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                {sk.isActive && (
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => revokeSessionKey(sk.id)}
+                                                    >
+                                                        Revoke
+                                                    </Button>
+                                                )}
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-muted-foreground hover:text-destructive"
+                                                    onClick={() => deleteSessionKey(sk.id)}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-500/10 rounded-lg border border-blue-100 dark:border-blue-500/20">
+                            <div className="flex items-start gap-2">
+                                <Zap className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5" />
+                                <div className="text-xs text-blue-700 dark:text-blue-400">
+                                    <p className="font-medium">Auto-Approval with Session Keys</p>
+                                    <p className="mt-1">Session keys allow automations to execute transactions without manual approval, within your defined spending limits.</p>
+                                </div>
                             </div>
                         </div>
                     </GlassCard>
@@ -215,14 +386,5 @@ export default function SettingsPage() {
                 </div>
             </div>
         </div>
-    );
-}
-
-function Plus(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14" />
-            <path d="M12 5v14" />
-        </svg>
     );
 }

@@ -137,7 +137,7 @@ class Automation(Base):
     execution_count = Column(Integer, default=0, nullable=False)
     
     # Additional metadata
-    metadata = Column(JSONB, default={}, nullable=False)
+    extra_data = Column(JSONB, default={}, nullable=False)
     
     # Relationships
     user = relationship("User", back_populates="automations")

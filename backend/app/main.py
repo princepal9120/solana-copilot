@@ -59,7 +59,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
         logger.info("✅ Database connection successful")
     except Exception as e:
         logger.error(f"❌ Database connection failed: {e}")
-        raise
+        # raise  <-- Commented out to allow startup without DB for now
     
     logger.info("✅ Application startup complete")
     

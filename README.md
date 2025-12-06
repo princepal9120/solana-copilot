@@ -172,16 +172,144 @@ celery -A app.workers.celery_app beat --loglevel=info
 
 ## 📁 Project Structure
 
-See [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) for detailed folder organization.
-
 ```
 solana-copilot/
-├── frontend/          # Next.js 16 App Router with TailwindCSS v4
-├── backend/           # FastAPI + LangGraph Agents
-├── programs/          # Anchor Smart Contracts
-├── infrastructure/    # Docker, K8s, Terraform
-├── scripts/           # Utility scripts
-└── docs/              # Documentation
+│
+├── frontend/                          # Next.js 14 App Router Frontend
+│   ├── src/
+│   │   ├── app/                      # App Router pages
+│   │   │   ├── (auth)/              # Auth group
+│   │   │   ├── (dashboard)/         # Dashboard group
+│   │   │   ├── api/                 # API routes (Next.js API)
+│   │   │   ├── layout.tsx           # Root layout
+│   │   │   ├── page.tsx             # Landing page
+│   │   │   └── globals.css
+│   │   │
+│   │   ├── components/              # React components
+│   │   │   ├── ui/                  # Shadcn/UI components
+│   │   │   ├── chat/                # Chat interface
+│   │   │   ├── portfolio/           # Portfolio components
+│   │   │   ├── automations/         # Automation components
+│   │   │   ├── transactions/        # Transaction components
+│   │   │   ├── wallet/              # Wallet components
+│   │   │   └── shared/              # Shared components
+│   │   │
+│   │   ├── lib/                     # Utility libraries
+│   │   ├── hooks/                   # Custom React hooks
+│   │   ├── store/                   # Zustand state management
+│   │   ├── types/                   # TypeScript types
+│   │   └── config/                  # Configuration
+│   │
+│   ├── public/                      # Static assets
+│   └── ...
+│
+├── backend/                          # FastAPI Backend
+│   ├── app/
+│   │   ├── main.py                  # FastAPI application entry
+│   │   ├── api/                     # API routes
+│   │   ├── core/                    # Core functionality
+│   │   ├── db/                      # Database
+│   │   ├── models/                  # SQLAlchemy models
+│   │   ├── schemas/                 # Pydantic schemas
+│   │   ├── services/                # Business logic services
+│   │   ├── agents/                  # LangGraph AI Agents
+│   │   ├── integrations/            # External integrations
+│   │   ├── workers/                 # Celery background workers
+│   │   └── utils/                   # Utility functions
+│   │
+│   ├── alembic/                     # Database migrations
+│   ├── tests/                       # Tests
+│   └── ...
+│
+├── programs/                         # Anchor Smart Contracts
+│   ├── dca-program/                 # DCA Vault Program
+│   ├── rebalance-program/           # Rebalancing Program
+│   ├── session-key-program/         # Session Key Program
+│   └── Anchor.toml                  # Anchor workspace config
+│
+├── shared/                           # Shared code (types, constants)
+├── infrastructure/                   # Infrastructure as Code (Docker, K8s, Terraform)
+├── scripts/                          # Utility scripts
+├── docs/                             # Documentation
+└── ...
+```
+
+---
+
+## 🔧 Common Tasks
+
+### Add a New API Endpoint
+
+1. Create schema in `backend/app/schemas/`
+2. Create router in `backend/app/api/v1/`
+3. Register router in `backend/app/main.py`
+4. Test with `/docs` endpoint
+
+### Add a New Database Model
+
+1. Create model in `backend/app/models/`
+2. Import in `backend/app/models/__init__.py`
+3. Create migration: `alembic revision --autogenerate -m "add model"`
+4. Apply migration: `alembic upgrade head`
+
+### Add a New Service
+
+1. Create service in `backend/app/services/`
+2. Implement business logic
+3. Use in routers via dependency injection
+
+---
+
+## 🐛 Troubleshooting
+
+### Database Connection Error
+
+```bash
+# Check if PostgreSQL is running
+docker-compose ps postgres
+
+# View logs
+docker-compose logs postgres
+
+# Restart PostgreSQL
+docker-compose restart postgres
+```
+
+### Redis Connection Error
+
+```bash
+# Check if Redis is running
+docker-compose ps redis
+
+# Test connection
+docker exec -it solana-copilot-redis redis-cli ping
+# Should return: PONG
+
+# Restart Redis
+docker-compose restart redis
+```
+
+### Port Already in Use
+
+```bash
+# Find process using port 8000
+lsof -i :8000
+
+# Kill process
+kill -9 PID
+
+# Or change port in .env
+API_PORT=8001
+```
+
+### Import Errors
+
+```bash
+# Ensure virtual environment is activated
+source venv/bin/activate
+
+# Reinstall dependencies
+pip install -r requirements.txt --force-reinstall
 ```
 
 ---
@@ -230,12 +358,10 @@ solana-copilot/
 
 ## 📖 Documentation
 
-- [Architecture Overview](./docs/architecture/system-overview.md)
-- [API Documentation](./docs/api/openapi.yaml)
-- [Local Setup Guide](./docs/deployment/local-setup.md)
-- [Production Deployment](./docs/deployment/production-deploy.md)
-- [Contributing Guide](./docs/guides/contributing.md)
-- [Testing Guide](./docs/guides/testing.md)
+- **API Documentation**: See `/docs` endpoint when running the server
+- **Project Structure**: See above
+- **Troubleshooting**: See above
+- **Common Tasks**: See above
 
 ---
 

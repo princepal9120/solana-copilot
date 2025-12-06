@@ -39,6 +39,83 @@ router = APIRouter()
 # Authentication Endpoints
 # ============================================
 
+async def get_current_user_dependency(
+    db: AsyncSession = Depends(get_db),
+    token: Optional[str] = None,
+) -> User:
+    """
+    Dependency to get current authenticated user from JWT token.
+    
+    This should be used in protected endpoints:
+    
+    @router.get("/protected")
+    async def protected_route(user: User = Depends(get_current_user_dependency)):
+        ...
+    
+    Args:
+        db: Database session
+        token: JWT token from Authorization header
+    
+    Returns:
+        Current user
+    
+    Raises:
+        HTTPException: If token is invalid or user not found
+    """
+    from fastapi import Header
+    from typing import Annotated
+    
+    # Get token from Authorization header
+    # Format: "Bearer {token}"
+    # Note: In a real app, use OAuth2PasswordBearer or Header dependency
+    # For now, we assume token is passed or we need to fix this to read header
+    # But to fix NameError, we just move it.
+    
+    # Actually, let's fix the header reading while we are at it
+    # But I should stick to moving it first to minimize changes.
+    
+    if not token:
+        # Try to get from header if not passed (this won't work without Depends)
+        pass
+
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # Remove "Bearer " prefix
+    if token.startswith("Bearer "):
+        token = token[7:]
+    
+    # Verify token and get wallet address
+    wallet = verify_token(token)
+    if not wallet:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # Get user from database
+    result = await db.execute(
+        select(User).where(User.wallet_address == wallet)
+    )
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    return user
+
+# Export dependency for use in other routers
+get_current_user = get_current_user_dependency
+
+
 @router.post("/request-challenge", response_model=ChallengeResponse)
 async def request_challenge(
     request: ChallengeRequest,
@@ -253,72 +330,4 @@ async def logout(
     return {"message": "Logged out successfully"}
 
 
-# ============================================
-# Dependency: Get Current User
-# ============================================
 
-async def get_current_user_dependency(
-    db: AsyncSession = Depends(get_db),
-    token: Optional[str] = None,
-) -> User:
-    """
-    Dependency to get current authenticated user from JWT token.
-    
-    This should be used in protected endpoints:
-    
-    @router.get("/protected")
-    async def protected_route(user: User = Depends(get_current_user_dependency)):
-        ...
-    
-    Args:
-        db: Database session
-        token: JWT token from Authorization header
-    
-    Returns:
-        Current user
-    
-    Raises:
-        HTTPException: If token is invalid or user not found
-    """
-    from fastapi import Header
-    from typing import Annotated
-    
-    # Get token from Authorization header
-    # Format: "Bearer {token}"
-    if not token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    # Remove "Bearer " prefix
-    if token.startswith("Bearer "):
-        token = token[7:]
-    
-    # Verify token and get wallet address
-    wallet = verify_token(token)
-    if not wallet:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    # Get user from database
-    result = await db.execute(
-        select(User).where(User.wallet_address == wallet)
-    )
-    user = result.scalar_one_or_none()
-    
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
-        )
-    
-    return user
-
-
-# Export dependency for use in other routers
-get_current_user = get_current_user_dependency

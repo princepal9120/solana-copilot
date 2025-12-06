@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
-import { ChatSidebar } from "@/components/chat/ChatSidebar";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useTheme } from "next-themes";
+import { ChatWidget } from "../chat/ChatSidebar";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
-    const [isChatOpen, setIsChatOpen] = useState(false);
     const { theme } = useTheme();
     const [mounted, setMounted] = useState(false);
+    const [isChatOpen, setIsChatOpen] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -16,6 +17,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
     // Build class names - dashboard-theme is always applied, dark is added based on theme
     const themeClass = mounted && theme === "dark" ? "dashboard-theme dark" : "dashboard-theme";
+
+    if (!mounted) return null;
 
     return (
         <div className={`min-h-screen bg-background relative overflow-x-hidden ${themeClass}`}>
@@ -25,18 +28,25 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/5 blur-[80px]" />
             </div>
 
-            {/* Left Navigation */}
+            {/* Left Navigation (Sidebar) */}
             <DashboardNav />
 
-            {/* Main Content Area - Full width, chat is overlay */}
-            <main className="relative z-10 transition-all duration-300 ease-in-out pt-6 pb-12 px-8 min-h-screen ml-64">
-                <div className="max-w-7xl mx-auto">
+            {/* Main Content Area */}
+            <main className="relative z-10 transition-all duration-300 ease-in-out min-h-screen ml-64 flex flex-col">
+                {/* Top Navbar */}
+                <DashboardHeader />
+
+                {/* Page Content */}
+                <div className="flex-1 p-8 max-w-7xl mx-auto w-full">
                     {children}
                 </div>
             </main>
 
+
+
             {/* Right Chat Sidebar - Overlay, doesn't take space */}
-            <ChatSidebar isOpen={isChatOpen} onToggle={() => setIsChatOpen(!isChatOpen)} />
+            <ChatWidget isOpen={isChatOpen} onToggle={() => setIsChatOpen(!isChatOpen)} />
+
         </div>
     );
 }

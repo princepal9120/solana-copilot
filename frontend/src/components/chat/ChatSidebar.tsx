@@ -10,12 +10,12 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { VersionedTransaction } from '@solana/web3.js';
 import { toast } from 'sonner';
 
-interface ChatSidebarProps {
+interface ChatWidgetProps {
     isOpen: boolean;
     onToggle: () => void;
 }
 
-export function ChatSidebar({ isOpen, onToggle }: ChatSidebarProps) {
+export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
     const [input, setInput] = useState("");
     const { messages, isLoading, sendMessage } = useChatStore();
     const messagesEndRef = React.useRef<HTMLDivElement>(null);

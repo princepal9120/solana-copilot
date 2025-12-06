@@ -747,7 +747,7 @@ Success Message:
 │   │   ├── Modal.tsx
 │   │   └── ...
 │   ├── /chat
-│   │   ├── ChatSidebar.tsx
+│   │   ├── ChatWidget.tsx
 │   │   ├── ChatMessage.tsx
 │   │   └── ChatInput.tsx
 │   ├── /dashboard

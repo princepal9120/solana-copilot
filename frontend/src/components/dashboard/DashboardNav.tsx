@@ -46,7 +46,7 @@ export function DashboardNav() {
     return (
         <nav className="w-64 h-screen fixed left-0 top-0 border-r border-border bg-card/50 backdrop-blur-xl flex flex-col z-40">
             {/* Logo */}
-            <Link href="/dashboard">
+            <Link href="/">
                 <div className="p-6 flex items-center gap-2">
                     <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
                         <Wallet className="text-primary-foreground h-5 w-5" />

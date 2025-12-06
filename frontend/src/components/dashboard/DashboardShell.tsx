@@ -3,25 +3,15 @@
 import React, { useState, useEffect } from "react";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { useTheme } from "next-themes";
 import { ChatWidget } from "../chat/ChatSidebar";
+import { DashboardThemeProvider, useDashboardTheme } from "@/components/providers/DashboardThemeProvider";
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
-    const { theme } = useTheme();
-    const [mounted, setMounted] = useState(false);
+function DashboardContent({ children }: { children: React.ReactNode }) {
+    const { resolvedTheme } = useDashboardTheme();
     const [isChatOpen, setIsChatOpen] = useState(false);
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    // Build class names - dashboard-theme is always applied, dark is added based on theme
-    const themeClass = mounted && theme === "dark" ? "dashboard-theme dark" : "dashboard-theme";
-
-    if (!mounted) return null;
-
     return (
-        <div className={`min-h-screen bg-background relative overflow-x-hidden ${themeClass}`}>
+        <div className={`min-h-screen bg-background relative overflow-x-hidden dashboard-theme ${resolvedTheme === 'dark' ? 'dark' : ''}`}>
             {/* Background Aurora Effect */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-primary/5 blur-[100px] animate-pulse" />
@@ -42,11 +32,25 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 </div>
             </main>
 
-
-
             {/* Right Chat Sidebar - Overlay, doesn't take space */}
             <ChatWidget isOpen={isChatOpen} onToggle={() => setIsChatOpen(!isChatOpen)} />
-
         </div>
     );
 }
+
+export function DashboardShell({ children }: { children: React.ReactNode }) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return null;
+
+    return (
+        <DashboardThemeProvider>
+            <DashboardContent>{children}</DashboardContent>
+        </DashboardThemeProvider>
+    );
+}
+

@@ -3,7 +3,7 @@ import { Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { SolanaWalletProvider } from "@/components/providers/WalletProvider";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
+
 import QueryProvider from "@/components/providers/QueryProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { Toaster } from "sonner";
@@ -28,20 +28,15 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body className={`${inter.variable} ${ibmPlexMono.variable} font-sans antialiased bg-background text-foreground`}>
-                <ThemeProvider
-                    defaultTheme="light"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    <QueryProvider>
-                        <SolanaWalletProvider>
-                            <AuthProvider>
-                                {children}
-                                <Toaster position="top-right" richColors />
-                            </AuthProvider>
-                        </SolanaWalletProvider>
-                    </QueryProvider>
-                </ThemeProvider>
+                <QueryProvider>
+                    <SolanaWalletProvider>
+                        <AuthProvider>
+                            {children}
+                            <Toaster position="top-right" richColors />
+                        </AuthProvider>
+                    </SolanaWalletProvider>
+                </QueryProvider>
+
             </body>
         </html>
     );

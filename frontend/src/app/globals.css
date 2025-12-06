@@ -25,7 +25,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  
+
   --font-sans: Space Grotesk, Inter, sans-serif;
   --font-mono: JetBrains Mono, monospace;
 
@@ -43,15 +43,19 @@
 /* ===== LANDING PAGE THEME (Neo-Brutalist) ===== */
 @layer base {
   :root {
-    --background: hsl(0 0% 100%); /* White */
-    --foreground: hsl(0 0% 0%); /* Black */
+    --background: hsl(0 0% 100%);
+    /* White */
+    --foreground: hsl(0 0% 0%);
+    /* Black */
     --card: hsl(0 0% 100%);
     --card-foreground: hsl(0 0% 0%);
     --popover: hsl(0 0% 100%);
     --popover-foreground: hsl(0 0% 0%);
-    --primary: hsl(268 100% 63.5%); /* Solana Purple */
+    --primary: hsl(268 100% 63.5%);
+    /* Solana Purple */
     --primary-foreground: hsl(0 0% 100%);
-    --secondary: hsl(155 89% 51%); /* Electric Lime */
+    --secondary: hsl(155 89% 51%);
+    /* Electric Lime */
     --secondary-foreground: hsl(0 0% 0%);
     --muted: hsl(0 0% 96%);
     --muted-foreground: hsl(0 0% 40%);
@@ -59,11 +63,12 @@
     --accent-foreground: hsl(0 0% 0%);
     --destructive: hsl(0 84% 60%);
     --destructive-foreground: hsl(0 0% 100%);
-    --border: hsl(0 0% 0%); /* Black Borders */
+    --border: hsl(0 0% 0%);
+    /* Black Borders */
     --input: hsl(0 0% 0%);
     --ring: hsl(268 100% 63.5%);
     --radius: 0px;
-    
+
     /* Chart Colors for Landing Page (if any) */
     --chart-1: hsl(268 100% 63.5%);
     --chart-2: hsl(155 89% 51%);
@@ -75,15 +80,25 @@
 
 /* ===== DASHBOARD THEME (Softened Neo-Brutalist) ===== */
 .dashboard-theme {
-  --background: hsl(0 0% 10%); /* Deep Charcoal #1A1A1A */
-  --foreground: hsl(0 0% 100%); /* Pure White */
-  --card: hsl(0 0% 16.5%); /* Lighter Charcoal #2A2A2A */
+  --radius: 0.5rem;
+  /* Softened corners for dashboard */
+}
+
+.dark .dashboard-theme {
+  --background: hsl(0 0% 10%);
+  /* Deep Charcoal #1A1A1A */
+  --foreground: hsl(0 0% 100%);
+  /* Pure White */
+  --card: hsl(0 0% 16.5%);
+  /* Lighter Charcoal #2A2A2A */
   --card-foreground: hsl(0 0% 100%);
   --popover: hsl(0 0% 16.5%);
   --popover-foreground: hsl(0 0% 100%);
-  --primary: hsl(268 100% 63.5%); /* Solana Purple */
+  --primary: hsl(268 100% 63.5%);
+  /* Solana Purple */
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(0 0% 23%); /* #3A3A3A */
+  --secondary: hsl(0 0% 23%);
+  /* #3A3A3A */
   --secondary-foreground: hsl(0 0% 100%);
   --muted: hsl(0 0% 23%);
   --muted-foreground: hsl(0 0% 60%);
@@ -91,10 +106,10 @@
   --accent-foreground: hsl(0 0% 100%);
   --destructive: hsl(0 84% 60%);
   --destructive-foreground: hsl(0 0% 100%);
-  --border: hsl(0 0% 23%); /* #3A3A3A */
+  --border: hsl(0 0% 23%);
+  /* #3A3A3A */
   --input: hsl(0 0% 23%);
   --ring: hsl(268 100% 63.5%);
-  --radius: 0.5rem; /* Softened corners for dashboard */
 
   /* Chart Colors for Dashboard */
   --chart-1: hsl(268 100% 63.5%);
@@ -108,6 +123,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -116,12 +132,15 @@
 @utility neo-shadow {
   box-shadow: 8px 8px 0px #000000;
 }
+
 @utility neo-shadow-hover {
   box-shadow: 12px 12px 0px #9945FF;
 }
+
 @utility neo-shadow-active {
   box-shadow: 4px 4px 0px #000000;
 }
+
 @utility neo-border {
   border: 4px solid #000000;
 }

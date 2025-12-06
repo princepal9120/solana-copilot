@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Shield, Zap, TrendingUp, Activity, Check, Quote } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
+import HeroChatPreview from "@/components/landing/HeroChatPreview";
 
 const testimonials = [
     {
@@ -121,51 +122,8 @@ export default function LandingPage() {
                         </div>
                     </div>
 
-                    {/* Hero Visual */}
-                    <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-full blur-[100px] animate-pulse" />
-                        <GlassCard className="relative z-10 p-6 border-white/60 shadow-2xl transform rotate-[-2deg] hover:rotate-0 transition-transform duration-500">
-                            <div className="space-y-4">
-                                <div className="flex gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                        <Sparkles className="h-4 w-4 text-primary" />
-                                    </div>
-                                    <div className="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-slate-600">
-                                        Market volatility is high. I recommend rebalancing your SOL holdings.
-                                    </div>
-                                </div>
-                                <div className="flex gap-3 flex-row-reverse">
-                                    <div className="bg-primary text-white p-3 rounded-2xl rounded-tr-none shadow-sm text-sm">
-                                        Execute rebalance. 50% USDC, 50% SOL.
-                                    </div>
-                                </div>
-                                <div className="flex gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                        <Sparkles className="h-4 w-4 text-primary" />
-                                    </div>
-                                    <div className="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-slate-600 space-y-2">
-                                        <p>Done! Swapped 145 SOL to USDC.</p>
-                                        <div className="p-2 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center gap-2 text-emerald-700 text-xs font-bold">
-                                            <div className="w-2 h-2 bg-emerald-500 rounded-full" />
-                                            Transaction Confirmed
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </GlassCard>
-
-                        <GlassCard className="absolute -bottom-6 -left-6 p-4 w-48 animate-bounce duration-[3000ms]">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-emerald-100 rounded-lg text-emerald-600">
-                                    <TrendingUp className="h-5 w-5" />
-                                </div>
-                                <div>
-                                    <p className="text-xs text-slate-500">Portfolio</p>
-                                    <p className="font-bold text-slate-900">+24.5%</p>
-                                </div>
-                            </div>
-                        </GlassCard>
-                    </div>
+                    {/* Hero Visual - Animated Chat Preview */}
+                    <HeroChatPreview />
                 </div>
             </section>
 

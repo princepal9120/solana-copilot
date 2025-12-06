@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { portfolioApi } from "@/lib/api";
+import { RISK_THRESHOLDS, RISK_LEVELS } from "@/lib/constants";
 
 interface RiskData {
     risk_score: number;
@@ -20,9 +21,10 @@ interface RiskData {
     correlation?: number;
 }
 
-const mockRiskData: RiskData = {
+/** Fallback data when API is unavailable */
+const FALLBACK_RISK_DATA: RiskData = {
     risk_score: 45,
-    risk_level: "medium",
+    risk_level: RISK_LEVELS.MEDIUM,
     volatility_90d_pct: 8.5,
     max_drawdown_90d_pct: 12.3,
     concentration_top3_pct: 95.8,
@@ -83,13 +85,13 @@ export default function RiskAnalysisPage() {
         } catch (err) {
             console.error("Failed to fetch risk data:", err);
             setError("Failed to load risk analysis. Showing sample data.");
-            setRiskData(mockRiskData);
+            setRiskData(FALLBACK_RISK_DATA);
         } finally {
             setLoading(false);
         }
     }
 
-    const displayRisk = riskData || mockRiskData;
+    const displayRisk = riskData || FALLBACK_RISK_DATA;
 
     const getRiskColor = (level: string) => {
         switch (level.toLowerCase()) {
@@ -114,28 +116,29 @@ export default function RiskAnalysisPage() {
 
     const riskColors = getRiskColor(displayRisk.risk_level);
 
+    /** Generate AI insights based on risk data */
     const generateInsights = (data: RiskData) => {
         const insights: { type: "warning" | "info" | "success"; message: string }[] = [];
 
-        if (data.concentration_top3_pct > 80) {
+        if (data.concentration_top3_pct > RISK_THRESHOLDS.CONCENTRATION_WARNING) {
             insights.push({
                 type: "warning",
                 message: `High exposure to top tokens (${data.concentration_top3_pct.toFixed(0)}%). Consider diversifying to reduce single-asset risk.`,
             });
         }
-        if (data.volatility_90d_pct > 10) {
+        if (data.volatility_90d_pct > RISK_THRESHOLDS.VOLATILITY_WARNING) {
             insights.push({
                 type: "warning",
                 message: `Portfolio volatility is elevated (${data.volatility_90d_pct.toFixed(1)}%). Consider adding stablecoins or less volatile assets.`,
             });
         }
-        if (data.max_drawdown_90d_pct > 20) {
+        if (data.max_drawdown_90d_pct > RISK_THRESHOLDS.DRAWDOWN_WARNING) {
             insights.push({
                 type: "warning",
                 message: `Significant drawdown detected (-${data.max_drawdown_90d_pct.toFixed(1)}%). Review your stop-loss strategies.`,
             });
         }
-        if (data.risk_score <= 30) {
+        if (data.risk_score <= RISK_THRESHOLDS.HEALTHY_RISK_SCORE) {
             insights.push({
                 type: "success",
                 message: "Your portfolio has a healthy risk profile. Keep monitoring for changes.",

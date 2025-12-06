@@ -114,46 +114,7 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Settings */}
                 <div className="lg:col-span-2 space-y-6">
-                    {/* Theme Toggle */}
-                    <GlassCard className="p-6">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-primary/10 rounded-xl">
-                                    <Palette className="h-5 w-5 text-primary" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-foreground">Appearance</h3>
-                                    <p className="text-sm text-muted-foreground">Choose your preferred theme</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
-                                <button
-                                    onClick={() => setTheme("light")}
-                                    className={cn(
-                                        "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all",
-                                        theme === "light"
-                                            ? "bg-background text-foreground shadow-sm"
-                                            : "text-muted-foreground hover:text-foreground"
-                                    )}
-                                >
-                                    <Sun className="h-4 w-4" />
-                                    Light
-                                </button>
-                                <button
-                                    onClick={() => setTheme("dark")}
-                                    className={cn(
-                                        "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all",
-                                        theme === "dark"
-                                            ? "bg-background text-foreground shadow-sm"
-                                            : "text-muted-foreground hover:text-foreground"
-                                    )}
-                                >
-                                    <Moon className="h-4 w-4" />
-                                    Dark
-                                </button>
-                            </div>
-                        </div>
-                    </GlassCard>
+                
 
                     {/* Session Keys Section */}
                     <GlassCard className="p-6">

@@ -84,7 +84,7 @@
   /* Softened corners for dashboard */
 }
 
-.dark .dashboard-theme {
+.dashboard-theme.dark {
   --background: hsl(0 0% 10%);
   /* Deep Charcoal #1A1A1A */
   --foreground: hsl(0 0% 100%);

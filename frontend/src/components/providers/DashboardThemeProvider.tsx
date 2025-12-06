@@ -40,8 +40,6 @@ export function DashboardThemeProvider({ children }: DashboardThemeProviderProps
 
     // Resolve system theme
     useEffect(() => {
-        if (!mounted) return;
-
         const resolveTheme = () => {
             if (theme === "system") {
                 const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -63,7 +61,7 @@ export function DashboardThemeProvider({ children }: DashboardThemeProviderProps
 
         mediaQuery.addEventListener("change", handler);
         return () => mediaQuery.removeEventListener("change", handler);
-    }, [theme, mounted]);
+    }, [theme]);
 
     const setTheme = (newTheme: Theme) => {
         setThemeState(newTheme);

@@ -4,11 +4,22 @@ import React, { useState, useEffect } from "react";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { ChatWidget } from "../chat/ChatSidebar";
-import { DashboardThemeProvider, useDashboardTheme } from "@/components/providers/DashboardThemeProvider";
+import { useDashboardTheme } from "@/components/providers/DashboardThemeProvider";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-function DashboardContent({ children }: { children: React.ReactNode }) {
+export function DashboardShell({ children }: { children: React.ReactNode }) {
     const { resolvedTheme } = useDashboardTheme();
+    const [mounted, setMounted] = useState(false);
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return null;
 
     return (
         <div className={`min-h-screen bg-background relative overflow-x-hidden dashboard-theme ${resolvedTheme === 'dark' ? 'dark' : ''}`}>
@@ -18,16 +29,35 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/5 blur-[80px]" />
             </div>
 
-            {/* Left Navigation (Sidebar) */}
-            <DashboardNav />
+            {/* Mobile Header */}
+            <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4 bg-background/80 backdrop-blur-md border-b border-border">
+                <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                    <SheetTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <Menu className="h-6 w-6" />
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="p-0 w-64 border-r border-border bg-card">
+                        <DashboardNav />
+                    </SheetContent>
+                </Sheet>
+                <DashboardHeader />
+            </div>
+
+            {/* Desktop Sidebar */}
+            <div className="hidden lg:block">
+                <DashboardNav />
+            </div>
 
             {/* Main Content Area */}
-            <main className="relative z-10 transition-all duration-300 ease-in-out min-h-screen ml-64 flex flex-col">
-                {/* Top Navbar */}
-                <DashboardHeader />
+            <main className="relative z-10 transition-all duration-300 ease-in-out min-h-screen lg:ml-64 flex flex-col pt-16 lg:pt-0">
+                {/* Desktop Top Navbar */}
+                <div className="hidden lg:block">
+                    <DashboardHeader />
+                </div>
 
                 {/* Page Content */}
-                <div className="flex-1 p-8 max-w-7xl mx-auto w-full">
+                <div className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">
                     {children}
                 </div>
             </main>
@@ -37,20 +67,3 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         </div>
     );
 }
-
-export function DashboardShell({ children }: { children: React.ReactNode }) {
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) return null;
-
-    return (
-        <DashboardThemeProvider>
-            <DashboardContent>{children}</DashboardContent>
-        </DashboardThemeProvider>
-    );
-}
-

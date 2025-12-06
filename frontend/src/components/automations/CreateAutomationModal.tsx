@@ -14,12 +14,12 @@ interface CreateAutomationModalProps {
     onSuccess?: () => void;
 }
 
-type AutomationType = "dca" | "stop_loss" | "take_profit" | "rebalance";
+type AutomationType = "dca" | "recurring_swap" | "rebalance";
 
 const automationTypes: { type: AutomationType; label: string; icon: React.ElementType; description: string; color: string }[] = [
     { type: "dca", label: "DCA", icon: RefreshCw, description: "Dollar-cost averaging into a token", color: "bg-blue-100 text-blue-700 border-blue-200" },
-    { type: "stop_loss", label: "Stop-Loss", icon: TrendingDown, description: "Sell when price drops below threshold", color: "bg-amber-100 text-amber-700 border-amber-200" },
-    { type: "take_profit", label: "Take-Profit", icon: TrendingUp, description: "Sell when price reaches target", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+    { type: "recurring_swap", label: "Recurring Swap", icon: RefreshCw, description: "Recurring swap into a token", color: "bg-blue-100 text-blue-700 border-blue-200" },
+    { type: "rebalance", label: "Rebalance", icon: RefreshCw, description: "Rebalance your portfolio", color: "bg-blue-100 text-blue-700 border-blue-200" },
     { type: "rebalance", label: "Rebalance", icon: RefreshCw, description: "Maintain target allocation percentages", color: "bg-purple-100 text-purple-700 border-purple-200" },
 ];
 
@@ -102,7 +102,7 @@ export function CreateAutomationModal({ isOpen, onClose, onSuccess }: CreateAuto
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" onClick={handleClose} />
 
             {/* Modal */}
-            <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-lg">
+            <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-lg px-4">
                 <div className="bg-background border border-border rounded-2xl shadow-2xl overflow-hidden">
                     {/* Header */}
                     <div className="flex items-center justify-between p-6 border-b border-border">
@@ -120,7 +120,7 @@ export function CreateAutomationModal({ isOpen, onClose, onSuccess }: CreateAuto
                         {step === 1 && (
                             <div className="space-y-4">
                                 <p className="text-sm text-muted-foreground mb-4">Select the type of automation you want to create:</p>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {automationTypes.map((item) => {
                                         const Icon = item.icon;
                                         return (

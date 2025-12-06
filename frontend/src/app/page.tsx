@@ -88,7 +88,7 @@ export default function LandingPage() {
                             <Sparkles className="h-4 w-4" />
                             <span>AI-Powered DeFi Automation</span>
                         </div>
-                        <h1 className="text-6xl md:text-7xl font-bold leading-[1.1] tracking-tight">
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
                             Your AI Financial <br />
                             <span className="text-primary underline decoration-4 decoration-black underline-offset-4">Advisor on Solana</span>
                         </h1>

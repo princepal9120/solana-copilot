@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { GlassCard } from "@/components/ui/glass-card";
+import { NeoCard } from "@/components/ui/neo-card";
 import { Button } from "@/components/ui/button";
 import {
     ShieldCheck, AlertTriangle, TrendingUp, TrendingDown,
@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { portfolioApi } from "@/lib/api";
 import { RISK_THRESHOLDS, RISK_LEVELS } from "@/lib/constants";
+import { RiskGauge, RiskMetricCard } from "@/components/portfolio";
 
 interface RiskData {
     risk_score: number;
@@ -182,40 +183,15 @@ export default function RiskAnalysisPage() {
 
             {/* Main Risk Score */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <GlassCard className="lg:col-span-1 p-8 flex flex-col items-center justify-center">
-                    {loading ? (
-                        <Loader2 className="h-12 w-12 animate-spin text-muted-foreground" />
-                    ) : (
-                        <>
-                            {/* Gauge */}
-                            <div className="relative w-48 h-24 overflow-hidden mb-4">
-                                <div className="absolute w-48 h-48 rounded-full border-[16px] border-muted" />
-                                <div
-                                    className={cn(
-                                        "absolute w-48 h-48 rounded-full border-[16px] border-b-transparent border-r-transparent border-l-transparent transition-transform duration-500",
-                                        riskColors.text.replace("text-", "border-t-")
-                                    )}
-                                    style={{
-                                        transform: `rotate(${-90 + (displayRisk.risk_score / 100) * 180}deg)`,
-                                    }}
-                                />
-                            </div>
-                            <div className="text-center">
-                                <p className="text-5xl font-bold text-foreground">{displayRisk.risk_score}</p>
-                                <p className="text-sm text-muted-foreground">out of 100</p>
-                            </div>
-                            <div className={cn(
-                                "mt-4 px-4 py-2 rounded-full text-sm font-medium capitalize",
-                                riskColors.bg, riskColors.text
-                            )}>
-                                {displayRisk.risk_level.replace("_", " ")} Risk
-                            </div>
-                        </>
-                    )}
-                </GlassCard>
+                <RiskGauge
+                    riskScore={displayRisk.risk_score}
+                    riskLevel={displayRisk.risk_level}
+                    loading={loading}
+                    getRiskColor={getRiskColor}
+                />
 
                 {/* Metrics Grid */}
-                <GlassCard className="lg:col-span-2 p-6">
+                <NeoCard className="lg:col-span-2 p-6">
                     <h3 className="font-semibold text-foreground mb-6 flex items-center gap-2">
                         <Activity className="h-5 w-5 text-primary" />
                         Risk Metrics
@@ -224,38 +200,25 @@ export default function RiskAnalysisPage() {
                         {riskMetrics.map((metric) => {
                             const value = displayRisk[metric.key as keyof RiskData] as number;
                             const level = getMetricLevel(value, metric.thresholds, metric.inverse);
-                            const levelColors = getRiskColor(level);
-                            const Icon = metric.icon;
 
                             return (
-                                <div
+                                <RiskMetricCard
                                     key={metric.key}
-                                    className={cn(
-                                        "p-4 rounded-xl border transition-all hover:shadow-md",
-                                        levelColors.bg, levelColors.border
-                                    )}
-                                >
-                                    <div className="flex items-start justify-between mb-2">
-                                        <Icon className={cn("h-5 w-5", levelColors.text)} />
-                                        <span className={cn(
-                                            "text-xs font-medium px-2 py-0.5 rounded-full capitalize",
-                                            levelColors.bg, levelColors.text
-                                        )}>
-                                            {level}
-                                        </span>
-                                    </div>
-                                    <p className="text-2xl font-bold text-foreground">{metric.format(value)}</p>
-                                    <p className="text-sm text-muted-foreground mt-1">{metric.label}</p>
-                                    <p className="text-xs text-muted-foreground/70 mt-0.5">{metric.description}</p>
-                                </div>
+                                    label={metric.label}
+                                    description={metric.description}
+                                    value={metric.format(value)}
+                                    level={level}
+                                    icon={metric.icon}
+                                    getRiskColor={getRiskColor}
+                                />
                             );
                         })}
                     </div>
-                </GlassCard>
+                </NeoCard>
             </div>
 
             {/* AI Insights */}
-            <GlassCard className="p-6">
+            <NeoCard className="p-6">
                 <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
                     <Lightbulb className="h-5 w-5 text-primary" />
                     AI Insights
@@ -293,7 +256,7 @@ export default function RiskAnalysisPage() {
                         );
                     })}
                 </div>
-            </GlassCard>
+            </NeoCard>
 
             {/* Action Buttons */}
             <div className="flex gap-4">

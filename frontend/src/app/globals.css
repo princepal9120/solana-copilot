@@ -78,46 +78,7 @@
   }
 }
 
-/* ===== DASHBOARD THEME (Softened Neo-Brutalist) ===== */
-.dashboard-theme {
-  --radius: 0.5rem;
-  /* Softened corners for dashboard */
-}
 
-.dashboard-theme.dark {
-  --background: hsl(0 0% 10%);
-  /* Deep Charcoal #1A1A1A */
-  --foreground: hsl(0 0% 100%);
-  /* Pure White */
-  --card: hsl(0 0% 16.5%);
-  /* Lighter Charcoal #2A2A2A */
-  --card-foreground: hsl(0 0% 100%);
-  --popover: hsl(0 0% 16.5%);
-  --popover-foreground: hsl(0 0% 100%);
-  --primary: hsl(268 100% 63.5%);
-  /* Solana Purple */
-  --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(0 0% 23%);
-  /* #3A3A3A */
-  --secondary-foreground: hsl(0 0% 100%);
-  --muted: hsl(0 0% 23%);
-  --muted-foreground: hsl(0 0% 60%);
-  --accent: hsl(268 100% 63.5%);
-  --accent-foreground: hsl(0 0% 100%);
-  --destructive: hsl(0 84% 60%);
-  --destructive-foreground: hsl(0 0% 100%);
-  --border: hsl(0 0% 23%);
-  /* #3A3A3A */
-  --input: hsl(0 0% 23%);
-  --ring: hsl(268 100% 63.5%);
-
-  /* Chart Colors for Dashboard */
-  --chart-1: hsl(268 100% 63.5%);
-  --chart-2: hsl(155 89% 51%);
-  --chart-3: hsl(38 92% 50%);
-  --chart-4: hsl(0 84% 60%);
-  --chart-5: hsl(0 0% 60%);
-}
 
 @layer base {
   * {

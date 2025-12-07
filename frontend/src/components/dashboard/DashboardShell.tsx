@@ -22,7 +22,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     if (!mounted) return null;
 
     return (
-        <div className={`min-h-screen bg-background relative overflow-x-hidden dashboard-theme ${resolvedTheme === 'dark' ? 'dark' : ''}`}>
+        <div className={`min-h-screen bg-background relative overflow-x-hidden ${resolvedTheme === 'dark' ? 'dark' : ''}`}>
             {/* Background Aurora Effect */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-primary/5 blur-[100px] animate-pulse" />

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { GlassCard } from "@/components/ui/glass-card";
+import { NeoCard } from "@/components/ui/neo-card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -114,10 +114,10 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Settings */}
                 <div className="lg:col-span-2 space-y-6">
-                
+
 
                     {/* Session Keys Section */}
-                    <GlassCard className="p-6">
+                    <NeoCard className="p-6">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 bg-purple-100 dark:bg-purple-500/20 rounded-xl">
@@ -229,13 +229,13 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                         </div>
-                    </GlassCard>
+                    </NeoCard>
 
                     {/* Settings Sections */}
                     {settingsSections.map((section) => {
                         const Icon = section.icon;
                         return (
-                            <GlassCard key={section.title} className="p-6">
+                            <NeoCard key={section.title} className="p-6">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="p-3 bg-primary/10 rounded-xl">
                                         <Icon className="h-5 w-5 text-primary" />
@@ -259,12 +259,12 @@ export default function SettingsPage() {
                                         </div>
                                     ))}
                                 </div>
-                            </GlassCard>
+                            </NeoCard>
                         );
                     })}
 
                     {/* Danger Zone */}
-                    <GlassCard className="p-6 border-destructive/30">
+                    <NeoCard className="p-6 border-destructive/30">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-3 bg-destructive/10 rounded-xl">
                                 <AlertTriangle className="h-5 w-5 text-destructive" />
@@ -280,13 +280,13 @@ export default function SettingsPage() {
                                 <Button variant="destructive" size="sm">Delete</Button>
                             </div>
                         </div>
-                    </GlassCard>
+                    </NeoCard>
                 </div>
 
                 {/* Sidebar */}
                 <div className="space-y-6">
                     {/* Connected Wallets */}
-                    <GlassCard className="p-6">
+                    <NeoCard className="p-6">
                         <div className="flex items-center gap-3 mb-4">
                             <Wallet className="h-5 w-5 text-primary" />
                             <h3 className="font-semibold text-foreground">Connected Wallets</h3>
@@ -309,10 +309,10 @@ export default function SettingsPage() {
                                 Add Wallet
                             </Button>
                         </div>
-                    </GlassCard>
+                    </NeoCard>
 
                     {/* Quick Links */}
-                    <GlassCard className="p-6">
+                    <NeoCard className="p-6">
                         <h3 className="font-semibold text-foreground mb-4">Quick Links</h3>
                         <div className="space-y-2">
                             {[
@@ -333,17 +333,17 @@ export default function SettingsPage() {
                                 </button>
                             ))}
                         </div>
-                    </GlassCard>
+                    </NeoCard>
 
                     {/* Version Info */}
-                    <GlassCard className="p-4">
+                    <NeoCard className="p-4">
                         <div className="text-center text-sm text-muted-foreground">
                             <p>Solana Copilot v1.0.0</p>
                             <a href="#" className="text-primary hover:underline flex items-center justify-center gap-1 mt-1">
                                 View Changelog <ExternalLink className="h-3 w-3" />
                             </a>
                         </div>
-                    </GlassCard>
+                    </NeoCard>
                 </div>
             </div>
         </div>

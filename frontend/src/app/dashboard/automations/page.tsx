@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { GlassCard } from "@/components/ui/glass-card";
+import { NeoCard } from "@/components/ui/neo-card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Zap, Plus, Clock, TrendingUp, TrendingDown, RefreshCw, Pause, Play, Trash2, Settings, Loader2 } from "lucide-react";
@@ -171,7 +171,7 @@ export default function AutomationsPage() {
 
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <GlassCard className="p-5">
+                <NeoCard className="p-5">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm text-muted-foreground">Active</p>
@@ -181,8 +181,8 @@ export default function AutomationsPage() {
                             <Play className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                         </div>
                     </div>
-                </GlassCard>
-                <GlassCard className="p-5">
+                </NeoCard>
+                <NeoCard className="p-5">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm text-muted-foreground">Paused</p>
@@ -192,8 +192,8 @@ export default function AutomationsPage() {
                             <Pause className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                         </div>
                     </div>
-                </GlassCard>
-                <GlassCard className="p-5">
+                </NeoCard>
+                <NeoCard className="p-5">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm text-muted-foreground">Total</p>
@@ -203,8 +203,8 @@ export default function AutomationsPage() {
                             <Zap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                         </div>
                     </div>
-                </GlassCard>
-                <GlassCard className="p-5">
+                </NeoCard>
+                <NeoCard className="p-5">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm text-muted-foreground">DCA Strategies</p>
@@ -216,7 +216,7 @@ export default function AutomationsPage() {
                             <RefreshCw className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                         </div>
                     </div>
-                </GlassCard>
+                </NeoCard>
             </div>
 
             {/* Quick Create */}
@@ -224,7 +224,7 @@ export default function AutomationsPage() {
                 {Object.entries(typeConfig).slice(0, 4).map(([type, config]) => {
                     const Icon = config.icon;
                     return (
-                        <GlassCard key={type} className="p-4 cursor-pointer hover:border-primary/50 transition-all group">
+                        <NeoCard key={type} className="p-4 cursor-pointer hover:border-primary/50 transition-all group">
                             <div className="flex items-center gap-3">
                                 <div className={cn("p-2 rounded-lg", config.bgColor)}>
                                     <Icon className={cn("h-5 w-5", config.textColor)} />
@@ -236,13 +236,13 @@ export default function AutomationsPage() {
                                     <p className="text-xs text-muted-foreground">Create new</p>
                                 </div>
                             </div>
-                        </GlassCard>
+                        </NeoCard>
                     );
                 })}
             </div>
 
             {/* Automations List */}
-            <GlassCard className="p-6">
+            <NeoCard className="p-6">
                 <div className="flex items-center justify-between mb-6">
                     <h3 className="font-semibold text-foreground flex items-center gap-2">
                         <Zap className="h-5 w-5 text-primary" />
@@ -341,7 +341,7 @@ export default function AutomationsPage() {
                         })}
                     </div>
                 )}
-            </GlassCard>
+            </NeoCard>
 
             {/* Create Automation Modal */}
             <CreateAutomationModal

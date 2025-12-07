@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+import { NeoCard } from "@/components/ui/neo-card";
 import { ArrowRight, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +25,7 @@ interface TransactionPreviewProps {
 
 export function TransactionPreview({ details, onApprove, onReject }: TransactionPreviewProps) {
     return (
-        <GlassCard className="p-4 border-l-4 border-l-primary my-2 bg-card/50">
+        <NeoCard className="p-4 w-full max-w-sm mt-2 border-primary/20 bg-primary/5">
             <div className="flex items-center justify-between mb-3">
                 <h4 className="font-semibold text-sm text-foreground uppercase tracking-wider">{details.type} Preview</h4>
                 {details.riskLevel && (
@@ -92,6 +92,6 @@ export function TransactionPreview({ details, onApprove, onReject }: Transaction
                     Approve
                 </Button>
             </div>
-        </GlassCard>
+        </NeoCard>
     );
 }

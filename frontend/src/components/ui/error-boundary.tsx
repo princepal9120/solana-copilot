@@ -3,7 +3,7 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+import { NeoCard } from "@/components/ui/neo-card";
 
 interface Props {
     children: ReactNode;
@@ -45,7 +45,7 @@ export class ErrorBoundary extends Component<Props, State> {
             }
 
             return (
-                <GlassCard className="p-8 text-center">
+                <NeoCard className="p-8 text-center">
                     <div className="flex flex-col items-center gap-4">
                         <div className="p-4 bg-red-100 dark:bg-red-500/20 rounded-full">
                             <AlertTriangle className="h-8 w-8 text-red-600 dark:text-red-400" />
@@ -68,7 +68,7 @@ export class ErrorBoundary extends Component<Props, State> {
                             Try Again
                         </Button>
                     </div>
-                </GlassCard>
+                </NeoCard>
             );
         }
 

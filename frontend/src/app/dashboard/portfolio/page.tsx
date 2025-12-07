@@ -1,23 +1,36 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
-import { GlassCard } from "@/components/ui/glass-card";
+import { NeoCard } from "@/components/ui/neo-card";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Wallet, BarChart3, PieChart as PieChartIcon, Loader2 } from "lucide-react";
+import { Wallet, BarChart3, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 import { portfolioApi, transactionsApi } from "@/lib/api";
+import {
+    HoldingsTable,
+    AllocationChart,
+    PerformanceStats,
+    Holding as BaseHolding,
+    formatAmount as baseFormatAmount
+} from "@/components/portfolio";
+
+// Use local formatters if needed or alias imported ones
+const formatAmount = baseFormatAmount;
+// Use local helper for time ago which wasn't extracted
+const formatTimeAgo = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    if (hours < 1) return 'just now';
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+};
+
+// Aliasing type to match local usage
+type Holding = BaseHolding;
 
 // Types
-interface Holding {
-    mint: string;
-    symbol: string;
-    amount: number;
-    price_usd: number;
-    value_usd: number;
-    allocation_pct: number;
-}
-
 interface Transaction {
     id: string;
     action: string;
@@ -36,8 +49,6 @@ interface Performance {
     return_7d_pct: number;
     return_30d_pct: number;
 }
-
-const CHART_COLORS = ["#8b5cf6", "#3b82f6", "#f97316", "#14b8a6", "#6366f1", "#ec4899", "#10b981"];
 
 export default function PortfolioPage() {
     const [holdings, setHoldings] = useState<Holding[]>([]);
@@ -97,38 +108,6 @@ export default function PortfolioPage() {
     const displayPerformance = performance || { total_pnl_usd: 1234, total_pnl_pct: 8.5, return_1d_pct: 2.1, return_7d_pct: 5.3, return_30d_pct: 12.0 };
     const displayTransactions = transactions.length > 0 ? transactions : [];
 
-    // Find best/worst performers
-    const sortedByChange = [...displayHoldings].sort((a, b) => (b.allocation_pct - a.allocation_pct));
-    const bestPerformer = sortedByChange[0];
-    const worstPerformer = sortedByChange[sortedByChange.length - 1];
-
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
-    };
-
-    const formatAmount = (value: number) => {
-        if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
-        if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
-        return value.toFixed(2);
-    };
-
-    const formatTimeAgo = (timestamp: string) => {
-        const date = new Date(timestamp);
-        const now = new Date();
-        const diff = now.getTime() - date.getTime();
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        if (hours < 1) return 'just now';
-        if (hours < 24) return `${hours}h ago`;
-        const days = Math.floor(hours / 24);
-        return `${days}d ago`;
-    };
-
-    // Prepare chart data
-    const chartData = displayHoldings.map((h, i) => ({
-        name: h.symbol,
-        value: h.value_usd,
-        fill: CHART_COLORS[i % CHART_COLORS.length],
-    }));
 
     return (
         <div className="space-y-6">
@@ -158,143 +137,28 @@ export default function PortfolioPage() {
             )}
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <GlassCard className="p-5">
-                    <p className="text-sm text-muted-foreground">Total Value</p>
-                    {loading ? (
-                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mt-2" />
-                    ) : (
-                        <>
-                            <h3 className="text-2xl font-bold text-foreground mt-1">{formatCurrency(displayTotal)}</h3>
-                            <div className={cn(
-                                "flex items-center gap-1 mt-2 text-xs font-medium",
-                                displayPerformance.total_pnl_pct >= 0 ? "text-emerald-500" : "text-red-500"
-                            )}>
-                                {displayPerformance.total_pnl_pct >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-                                <span>{displayPerformance.total_pnl_pct >= 0 ? '+' : ''}{formatCurrency(displayPerformance.total_pnl_usd)} ({displayPerformance.total_pnl_pct.toFixed(1)}%)</span>
-                            </div>
-                        </>
-                    )}
-                </GlassCard>
-                <GlassCard className="p-5">
-                    <p className="text-sm text-muted-foreground">24h Change</p>
-                    {loading ? (
-                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mt-2" />
-                    ) : (
-                        <>
-                            <h3 className={cn(
-                                "text-2xl font-bold mt-1",
-                                displayPerformance.return_1d_pct >= 0 ? "text-emerald-500" : "text-red-500"
-                            )}>
-                                {displayPerformance.return_1d_pct >= 0 ? '+' : ''}{displayPerformance.return_1d_pct.toFixed(1)}%
-                            </h3>
-                            <p className="text-xs text-muted-foreground mt-2">from yesterday</p>
-                        </>
-                    )}
-                </GlassCard>
-                <GlassCard className="p-5">
-                    <p className="text-sm text-muted-foreground">Largest Holding</p>
-                    <h3 className="text-2xl font-bold text-foreground mt-1">{bestPerformer?.symbol || '...'}</h3>
-                    <div className="flex items-center gap-1 mt-2 text-emerald-500 text-xs font-medium">
-                        <TrendingUp className="h-3 w-3" />
-                        <span>{bestPerformer?.allocation_pct?.toFixed(1) || 0}% of portfolio</span>
-                    </div>
-                </GlassCard>
-                <GlassCard className="p-5">
-                    <p className="text-sm text-muted-foreground">Smallest Holding</p>
-                    <h3 className="text-2xl font-bold text-foreground mt-1">{worstPerformer?.symbol || '...'}</h3>
-                    <div className="flex items-center gap-1 mt-2 text-muted-foreground text-xs font-medium">
-                        <TrendingDown className="h-3 w-3" />
-                        <span>{worstPerformer?.allocation_pct?.toFixed(1) || 0}% of portfolio</span>
-                    </div>
-                </GlassCard>
-            </div>
+            <PerformanceStats
+                totalValue={displayTotal}
+                performance={displayPerformance}
+                holdings={displayHoldings}
+                loading={loading}
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Holdings Table */}
-                <GlassCard className="lg:col-span-2 p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-semibold text-foreground flex items-center gap-2">
-                            <PieChartIcon className="h-5 w-5 text-primary" />
-                            Holdings
-                        </h3>
-                        <Button variant="ghost" size="sm">View All</Button>
-                    </div>
-                    {loading ? (
-                        <div className="flex items-center justify-center py-12">
-                            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                        </div>
-                    ) : (
-                        <div className="space-y-1">
-                            <div className="grid grid-cols-5 text-xs text-muted-foreground px-3 pb-2 border-b border-border">
-                                <span>Asset</span>
-                                <span>Amount</span>
-                                <span className="text-right">Value</span>
-                                <span className="text-right">Price</span>
-                                <span className="text-right">Allocation</span>
-                            </div>
-                            {displayHoldings.map((holding, index) => (
-                                <div key={holding.mint} className="grid grid-cols-5 items-center py-3 px-3 hover:bg-muted/50 rounded-lg transition-colors">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }} />
-                                        <div>
-                                            <p className="font-medium text-foreground">{holding.symbol}</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-sm text-foreground">{formatAmount(holding.amount)}</p>
-                                    <p className="text-sm text-foreground text-right">{formatCurrency(holding.value_usd)}</p>
-                                    <p className="text-sm text-muted-foreground text-right">{formatCurrency(holding.price_usd)}</p>
-                                    <p className="text-sm text-right text-muted-foreground">
-                                        {holding.allocation_pct.toFixed(1)}%
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </GlassCard>
+                <HoldingsTable
+                    holdings={displayHoldings}
+                    loading={loading}
+                />
 
                 {/* Allocation Chart */}
-                <GlassCard className="p-6">
-                    <h3 className="font-semibold text-foreground mb-6">Allocation</h3>
-                    <div className="h-[200px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={chartData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                >
-                                    {chartData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.fill} stroke="none" />
-                                    ))}
-                                </Pie>
-                                <RechartsTooltip
-                                    contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
-                                    itemStyle={{ color: 'hsl(var(--foreground))' }}
-                                />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </div>
-                    <div className="mt-4 space-y-2">
-                        {displayHoldings.slice(0, 4).map((holding, index) => (
-                            <div key={holding.mint} className="flex items-center justify-between text-sm">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }} />
-                                    <span className="text-foreground">{holding.symbol}</span>
-                                </div>
-                                <span className="text-muted-foreground">{holding.allocation_pct.toFixed(1)}%</span>
-                            </div>
-                        ))}
-                    </div>
-                </GlassCard>
+                <AllocationChart
+                    holdings={displayHoldings}
+                />
             </div>
 
             {/* Transaction History */}
-            <GlassCard className="p-6">
+            <NeoCard className="p-6">
                 <div className="flex items-center justify-between mb-6">
                     <h3 className="font-semibold text-foreground">Recent Transactions</h3>
                     <Button variant="ghost" size="sm">View All</Button>
@@ -340,7 +204,7 @@ export default function PortfolioPage() {
                         <p>No transactions yet</p>
                     </div>
                 )}
-            </GlassCard>
+            </NeoCard>
         </div>
     );
 }

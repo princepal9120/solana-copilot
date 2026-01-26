@@ -8,11 +8,46 @@ from typing import Any, Dict, List, Optional
 from decimal import Decimal
 
 import httpx
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from app.core.config import settings
 from app.utils.cache import cache_set, cache_get
 
 logger = logging.getLogger(__name__)
+
+
+# ============================================
+# Custom Exceptions
+# ============================================
+
+class JupiterError(Exception):
+    """Base exception for Jupiter client errors"""
+    pass
+
+
+class JupiterQuoteError(JupiterError):
+    """Error getting swap quote"""
+    pass
+
+
+class JupiterTransactionError(JupiterError):
+    """Error building swap transaction"""
+    pass
+
+
+class JupiterNetworkError(JupiterError):
+    """Network-related errors (timeout, connection)"""
+    pass
+
+
+class InsufficientLiquidityError(JupiterError):
+    """Not enough liquidity for the swap"""
+    pass
+
+
+class TokenNotFoundError(JupiterError):
+    """Token not found in registry"""
+    pass
 
 
 # ============================================
@@ -27,6 +62,35 @@ TOKEN_MINTS = {
     "ORCA": "orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE",
     "RAY": "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
     "BONK": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+    "JUP": "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
+    "WIF": "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
+    "PYTH": "HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3",
+}
+
+# Token decimals - critical for correct amount calculation
+TOKEN_DECIMALS = {
+    "SOL": 9,
+    "USDC": 6,
+    "USDT": 6,
+    "ORCA": 6,
+    "RAY": 6,
+    "BONK": 5,
+    "JUP": 6,
+    "WIF": 6,
+    "PYTH": 6,
+}
+
+# Reverse lookup: mint address -> decimals
+MINT_DECIMALS = {
+    "So11111111111111111111111111111111111111112": 9,  # SOL
+    "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": 6,  # USDC
+    "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB": 6,  # USDT
+    "orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE": 6,  # ORCA
+    "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R": 6,  # RAY
+    "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263": 5,  # BONK
+    "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN": 6,  # JUP
+    "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm": 6,  # WIF
+    "HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3": 6,  # PYTH
 }
 
 
@@ -54,17 +118,44 @@ class JupiterClient:
     
     def _get_token_mint(self, token: str) -> str:
         """Get token mint address from symbol"""
-        # If already a mint address (44 chars), return as-is
-        if len(token) == 44:
+        # If already a mint address (32-44 chars base58), return as-is
+        if len(token) >= 32 and len(token) <= 44:
             return token
-        
+
         # Lookup from registry
         mint = TOKEN_MINTS.get(token.upper())
         if not mint:
-            raise ValueError(f"Unknown token: {token}")
-        
+            raise TokenNotFoundError(f"Unknown token: {token}. Supported tokens: {', '.join(TOKEN_MINTS.keys())}")
+
         return mint
+
+    def _get_token_decimals(self, token: str) -> int:
+        """Get token decimals from symbol or mint address"""
+        # If it's a mint address, use MINT_DECIMALS
+        if len(token) >= 32 and len(token) <= 44:
+            return MINT_DECIMALS.get(token, 9)  # Default to 9 if unknown
+
+        # Otherwise use TOKEN_DECIMALS
+        return TOKEN_DECIMALS.get(token.upper(), 9)  # Default to 9 if unknown
+
+    def _parse_jupiter_error(self, response: httpx.Response) -> str:
+        """Parse error message from Jupiter API response"""
+        try:
+            data = response.json()
+            if "error" in data:
+                return data["error"]
+            if "message" in data:
+                return data["message"]
+            return f"HTTP {response.status_code}: {response.text[:200]}"
+        except Exception:
+            return f"HTTP {response.status_code}: {response.text[:200]}"
     
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type((httpx.TimeoutException, httpx.ConnectError)),
+        reraise=True
+    )
     async def get_quote(
         self,
         source_token: str,
@@ -73,46 +164,89 @@ class JupiterClient:
         slippage_bps: int = 100,
     ) -> Dict[str, Any]:
         """
-        Get swap quote from Jupiter.
-        
+        Get swap quote from Jupiter with retry logic.
+
         Args:
             source_token: Source token symbol or mint
             dest_token: Destination token symbol or mint
             amount: Amount to swap (in token units)
             slippage_bps: Slippage tolerance in basis points (100 = 1%)
-        
+
         Returns:
             Quote data
+
+        Raises:
+            TokenNotFoundError: If token is not supported
+            InsufficientLiquidityError: If not enough liquidity
+            JupiterQuoteError: For other quote errors
+            JupiterNetworkError: For network issues
         """
         try:
+            # Validate amount
+            if amount <= 0:
+                raise JupiterQuoteError("Amount must be greater than 0")
+
             # Get mint addresses
             source_mint = self._get_token_mint(source_token)
             dest_mint = self._get_token_mint(dest_token)
-            
-            # Convert amount to lamports/smallest unit
-            # Assuming 9 decimals for simplicity (should fetch from token metadata)
-            amount_lamports = int(amount * 1_000_000_000)
-            
+
+            # Get correct decimals for each token
+            source_decimals = self._get_token_decimals(source_token)
+            dest_decimals = self._get_token_decimals(dest_token)
+
+            # Convert amount to smallest unit using correct decimals
+            amount_smallest = int(amount * (10 ** source_decimals))
+
             # Build request
             params = {
                 "inputMint": source_mint,
                 "outputMint": dest_mint,
-                "amount": amount_lamports,
+                "amount": amount_smallest,
                 "slippageBps": slippage_bps,
             }
-            
+
             # Make request
             response = await self.client.get("/quote", params=params)
+
+            # Handle errors
+            if response.status_code == 400:
+                error_msg = self._parse_jupiter_error(response)
+                if "insufficient" in error_msg.lower() or "liquidity" in error_msg.lower():
+                    raise InsufficientLiquidityError(f"Not enough liquidity for {amount} {source_token} → {dest_token}")
+                raise JupiterQuoteError(f"Invalid quote request: {error_msg}")
+
+            if response.status_code == 404:
+                raise TokenNotFoundError(f"Token pair not found: {source_token} → {dest_token}")
+
+            if response.status_code >= 500:
+                raise JupiterNetworkError(f"Jupiter API server error: {response.status_code}")
+
             response.raise_for_status()
-            
             data = response.json()
-            
-            # Parse response
+
+            # Check for empty/invalid response
+            if not data or "outAmount" not in data:
+                raise JupiterQuoteError("Invalid response from Jupiter API")
+
+            # Parse response with correct output decimals
+            out_amount_raw = int(data["outAmount"])
+            amount_out = out_amount_raw / (10 ** dest_decimals)
+
+            # Check for zero output (no liquidity)
+            if out_amount_raw == 0:
+                raise InsufficientLiquidityError(f"No route available for {amount} {source_token} → {dest_token}")
+
             quote = {
                 "source_mint": source_mint,
                 "dest_mint": dest_mint,
+                "source_token": source_token.upper(),
+                "dest_token": dest_token.upper(),
+                "source_decimals": source_decimals,
+                "dest_decimals": dest_decimals,
                 "amount_in": amount,
-                "amount_out": float(data["outAmount"]) / 1_000_000_000,
+                "amount_in_smallest": amount_smallest,
+                "amount_out": amount_out,
+                "amount_out_smallest": out_amount_raw,
                 "price_impact": float(data.get("priceImpactPct", 0)),
                 "route": data.get("routePlan", []),
                 "fees": {
@@ -120,21 +254,29 @@ class JupiterClient:
                 },
                 "quote_data": data,  # Full quote for transaction building
             }
-            
+
             logger.info(
                 f"Jupiter quote: {amount} {source_token} → "
                 f"{quote['amount_out']:.6f} {dest_token} "
                 f"(impact: {quote['price_impact']}%)"
             )
-            
+
             return quote
-        
-        except httpx.HTTPError as e:
-            logger.error(f"Jupiter API error: {e}")
+
+        except (TokenNotFoundError, InsufficientLiquidityError, JupiterQuoteError):
             raise
+        except httpx.TimeoutException as e:
+            logger.error(f"Jupiter API timeout: {e}")
+            raise JupiterNetworkError(f"Jupiter API timeout. Please try again.")
+        except httpx.ConnectError as e:
+            logger.error(f"Jupiter API connection error: {e}")
+            raise JupiterNetworkError(f"Cannot connect to Jupiter API. Please check your connection.")
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Jupiter API HTTP error: {e}")
+            raise JupiterQuoteError(f"Jupiter API error: {e.response.status_code}")
         except Exception as e:
-            logger.error(f"Error getting Jupiter quote: {e}")
-            raise
+            logger.error(f"Unexpected error getting Jupiter quote: {e}", exc_info=True)
+            raise JupiterQuoteError(f"Failed to get quote: {str(e)}")
     
     async def get_all_routes(
         self,
@@ -165,47 +307,87 @@ class JupiterClient:
             logger.error(f"Error getting all routes: {e}")
             raise
     
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type((httpx.TimeoutException, httpx.ConnectError)),
+        reraise=True
+    )
     async def build_swap_transaction(
         self,
         wallet_address: str,
         quote: Dict[str, Any],
     ) -> Dict[str, Any]:
         """
-        Build swap transaction from quote.
-        
+        Build swap transaction from quote with retry logic.
+
         Args:
             wallet_address: User's wallet address
             quote: Quote from get_quote()
-        
+
         Returns:
-            Transaction data
+            Transaction data with base64 encoded swap transaction
+
+        Raises:
+            JupiterTransactionError: If transaction building fails
+            JupiterNetworkError: For network issues
         """
         try:
+            # Validate inputs
+            if not wallet_address or len(wallet_address) < 32:
+                raise JupiterTransactionError("Invalid wallet address")
+
+            if "quote_data" not in quote:
+                raise JupiterTransactionError("Invalid quote: missing quote_data")
+
             # Build request
             payload = {
                 "quoteResponse": quote["quote_data"],
                 "userPublicKey": wallet_address,
                 "wrapAndUnwrapSol": True,
                 "computeUnitPriceMicroLamports": "auto",
+                "dynamicComputeUnitLimit": True,
             }
-            
+
             # Make request
             response = await self.client.post("/swap", json=payload)
+
+            # Handle errors
+            if response.status_code == 400:
+                error_msg = self._parse_jupiter_error(response)
+                raise JupiterTransactionError(f"Failed to build transaction: {error_msg}")
+
+            if response.status_code >= 500:
+                raise JupiterNetworkError(f"Jupiter API server error: {response.status_code}")
+
             response.raise_for_status()
-            
             data = response.json()
-            
+
+            # Validate response
+            if "swapTransaction" not in data:
+                raise JupiterTransactionError("Invalid response: missing swapTransaction")
+
+            logger.info(f"Built swap transaction for {wallet_address[:8]}...")
+
             return {
                 "swap_transaction": data["swapTransaction"],
                 "last_valid_block_height": data.get("lastValidBlockHeight"),
             }
-        
-        except httpx.HTTPError as e:
-            logger.error(f"Jupiter swap transaction error: {e}")
+
+        except (JupiterTransactionError, JupiterNetworkError):
             raise
+        except httpx.TimeoutException as e:
+            logger.error(f"Jupiter API timeout building transaction: {e}")
+            raise JupiterNetworkError("Jupiter API timeout. Please try again.")
+        except httpx.ConnectError as e:
+            logger.error(f"Jupiter API connection error: {e}")
+            raise JupiterNetworkError("Cannot connect to Jupiter API. Please check your connection.")
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Jupiter API HTTP error: {e}")
+            raise JupiterTransactionError(f"Jupiter API error: {e.response.status_code}")
         except Exception as e:
-            logger.error(f"Error building swap transaction: {e}")
-            raise
+            logger.error(f"Unexpected error building swap transaction: {e}", exc_info=True)
+            raise JupiterTransactionError(f"Failed to build transaction: {str(e)}")
     
     async def get_token_price(
         self,

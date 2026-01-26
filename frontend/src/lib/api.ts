@@ -54,6 +54,10 @@ export const portfolioApi = {
         const response = await api.get(`/portfolio/performance?timeframe=${timeframe}`);
         return response.data;
     },
+    getHistory: async (timeframe: string = '30d') => {
+        const response = await api.get(`/portfolio/history?timeframe=${timeframe}`);
+        return response.data;
+    },
     getRisk: async () => {
         const response = await api.get('/portfolio/risk');
         return response.data;

@@ -289,6 +289,86 @@ async def create_snapshot(
         )
 
 
+@router.get("/history")
+async def get_portfolio_history(
+    timeframe: str = Query("30d", description="Timeframe: 7d, 30d, 90d, 1y"),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Get portfolio value history for charting.
+
+    Args:
+        timeframe: Time period for history
+
+    Returns:
+        Time series data for chart visualization
+    """
+
+    try:
+        # Parse timeframe
+        timeframe_days = {
+            "7d": 7,
+            "30d": 30,
+            "90d": 90,
+            "1y": 365,
+        }
+        days = timeframe_days.get(timeframe, 30)
+        start_date = datetime.utcnow() - timedelta(days=days)
+
+        # Get historical snapshots
+        result = await db.execute(
+            select(PortfolioSnapshot)
+            .where(PortfolioSnapshot.user_id == current_user.id)
+            .where(PortfolioSnapshot.created_at >= start_date)
+            .order_by(PortfolioSnapshot.created_at)
+        )
+        snapshots = result.scalars().all()
+
+        # Format for charting
+        history = [
+            {
+                "timestamp": snapshot.created_at.isoformat(),
+                "value_usd": float(snapshot.total_value_usd),
+                "risk_score": snapshot.risk_score,
+            }
+            for snapshot in snapshots
+        ]
+
+        # Calculate summary stats
+        if history:
+            start_value = history[0]["value_usd"]
+            end_value = history[-1]["value_usd"]
+            change_usd = end_value - start_value
+            change_pct = (change_usd / start_value * 100) if start_value > 0 else 0
+            high_value = max(h["value_usd"] for h in history)
+            low_value = min(h["value_usd"] for h in history)
+        else:
+            start_value = end_value = change_usd = change_pct = 0
+            high_value = low_value = 0
+
+        return {
+            "timeframe": timeframe,
+            "data_points": len(history),
+            "history": history,
+            "summary": {
+                "start_value": start_value,
+                "end_value": end_value,
+                "change_usd": change_usd,
+                "change_pct": round(change_pct, 2),
+                "high": high_value,
+                "low": low_value,
+            },
+        }
+
+    except Exception as e:
+        logger.error(f"Error getting portfolio history: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch portfolio history: {str(e)}"
+        )
+
+
 # ============================================
 # Helper Functions
 # ============================================

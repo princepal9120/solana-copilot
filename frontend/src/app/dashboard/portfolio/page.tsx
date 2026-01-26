@@ -9,6 +9,7 @@ import {
     HoldingsTable,
     AllocationChart,
     PerformanceStats,
+    PortfolioChart,
     Holding as BaseHolding,
     formatAmount as baseFormatAmount
 } from "@/components/portfolio";
@@ -143,6 +144,9 @@ export default function PortfolioPage() {
                 holdings={displayHoldings}
                 loading={loading}
             />
+
+            {/* Portfolio Chart */}
+            <PortfolioChart />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Holdings Table */}

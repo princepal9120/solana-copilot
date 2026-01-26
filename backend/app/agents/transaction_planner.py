@@ -259,8 +259,8 @@ class TransactionPlannerAgent(BaseAgent):
         return state
     
     async def _simulate_transaction(self, state: TransactionPlannerState) -> TransactionPlannerState:
-        """Simulate the transaction"""
-        
+        """Simulate the transaction and build swap transaction for signing"""
+
         try:
             simulation = await simulate_swap.ainvoke({
                 "wallet_address": state["user_wallet"],
@@ -269,20 +269,24 @@ class TransactionPlannerAgent(BaseAgent):
                 "amount": state["amount"],
                 "slippage_bps": state["slippage_bps"],
             })
-            
+
             state["simulation_result"] = simulation
             state["simulation_success"] = simulation.get("simulation_success", False)
-            
+
+            # Store the swap transaction for frontend signing
+            if simulation.get("swap_transaction"):
+                state["metadata"]["swap_transaction"] = simulation["swap_transaction"]
+
             if not state["simulation_success"]:
                 state["error"] = f"Simulation failed: {simulation.get('error')}"
-            
+
             logger.info(f"Simulation result: {state['simulation_success']}")
-        
+
         except Exception as e:
             logger.error(f"Simulation error: {e}", exc_info=True)
             state["error"] = f"Failed to simulate transaction: {str(e)}"
             state["simulation_success"] = False
-        
+
         return state
     
     async def _await_approval(self, state: TransactionPlannerState) -> TransactionPlannerState:
@@ -389,19 +393,19 @@ async def plan_swap_transaction(
 ) -> Dict[str, Any]:
     """
     Convenience function to plan a swap transaction.
-    
+
     Args:
         user_wallet: User's wallet address
         source_token: Source token symbol
         dest_token: Destination token symbol
         amount: Amount to swap
         slippage_bps: Slippage tolerance in basis points
-    
+
     Returns:
-        Transaction plan result
+        Transaction plan result with swap_transaction for frontend signing
     """
     agent = TransactionPlannerAgent()
-    
+
     result = await agent.ainvoke({
         "action": "swap",
         "source_token": source_token,
@@ -413,5 +417,19 @@ async def plan_swap_transaction(
         "error": None,
         "metadata": {},
     })
-    
-    return result
+
+    # Extract key information for the response
+    response = {
+        "success": not result.get("error"),
+        "error": result.get("error"),
+        "source_token": source_token,
+        "dest_token": dest_token,
+        "amount": amount,
+        "selected_route": result.get("selected_route", {}),
+        "simulation_result": result.get("simulation_result", {}),
+        "approval_required": result.get("approval_required", True),
+        # Critical: Include swap transaction for frontend signing
+        "swap_transaction": result.get("metadata", {}).get("swap_transaction"),
+    }
+
+    return response
